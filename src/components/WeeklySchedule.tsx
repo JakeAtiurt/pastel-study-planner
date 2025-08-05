@@ -221,12 +221,9 @@ const WeeklySchedule = () => {
                           <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
                         </div>
                         
-                        {/* Subject Name - More compact */}
+                        {/* Subject Name - Full text */}
                         <div className="text-xs font-medium leading-tight mb-2 line-clamp-2">
-                          {classBlock.subject.length > 20 ? 
-                            classBlock.subject.substring(0, 18) + "..." : 
-                            classBlock.subject
-                          }
+                          {classBlock.subject}
                         </div>
                         
                         {/* Time Badge - Smaller */}
