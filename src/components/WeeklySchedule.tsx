@@ -74,17 +74,17 @@ const WeeklySchedule = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  const getTopPosition = (startTime: number) => {
-    // Convert time to position from 8:00 (0%) to 19:00 (100%)
-    const minTime = 8;
-    const maxTime = 19;
-    return ((startTime - minTime) / (maxTime - minTime)) * 100;
+  // Create time slots from 8:00 to 19:00 in 30-minute increments
+  const timeSlots = Array.from({ length: 22 }, (_, i) => 8 + i * 0.5);
+
+  const getGridRow = (startTime: number) => {
+    // Convert time to grid row (1-based indexing)
+    return Math.round((startTime - 8) * 2) + 1;
   };
 
-  const getHeight = (startTime: number, endTime: number) => {
-    const duration = endTime - startTime;
-    const maxDuration = 11; // 11 hours from 8:00 to 19:00
-    return (duration / maxDuration) * 100;
+  const getGridSpan = (startTime: number, endTime: number) => {
+    // Calculate how many 30-minute slots this class spans
+    return Math.round((endTime - startTime) * 2);
   };
 
   return (
@@ -135,51 +135,80 @@ const WeeklySchedule = () => {
 
           {/* Schedule Grid */}
           <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-2xl border border-white/50">
-            <div className="grid grid-cols-7 gap-2 md:gap-4 h-[600px]">
-              {/* Day Headers */}
+            {/* Day Headers */}
+            <div className="grid grid-cols-7 gap-2 md:gap-4 mb-4">
               {days.map((day) => (
-                <div key={day} className="text-center">
-                  <div className="bg-gradient-to-r from-pastel-purple to-pastel-pink p-3 rounded-2xl shadow-lg mb-4">
-                    <h3 className="font-semibold text-purple-700 text-sm md:text-base">
-                      {day}
-                    </h3>
-                  </div>
+                <div key={day} className="bg-gradient-to-r from-pastel-purple to-pastel-pink p-3 rounded-2xl shadow-lg">
+                  <h3 className="font-semibold text-purple-700 text-sm md:text-base text-center">
+                    {day}
+                  </h3>
+                </div>
+              ))}
+            </div>
+
+            {/* Grid Container with Time Slots */}
+            <div className="grid grid-cols-7 gap-2 md:gap-4 relative">
+              {/* Background Grid Lines */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div 
+                  className="grid grid-cols-7 gap-2 md:gap-4 h-full"
+                  style={{ gridTemplateRows: `repeat(${timeSlots.length}, 30px)` }}
+                >
+                  {Array.from({ length: 7 * timeSlots.length }).map((_, index) => (
+                    <div 
+                      key={index} 
+                      className="border-dashed border-gray-200 border-b border-r opacity-30"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Day Columns */}
+              {days.map((day, dayIndex) => (
+                <div 
+                  key={day} 
+                  className="relative"
+                  style={{ 
+                    display: 'grid',
+                    gridTemplateRows: `repeat(${timeSlots.length}, 30px)`,
+                    minHeight: `${timeSlots.length * 30}px`
+                  }}
+                >
+                  {/* Class Cards */}
+                  {scheduleData[day]?.map((classBlock, index) => (
+                    <div
+                      key={index}
+                      className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${getColorClasses(classBlock.color)} z-10`}
+                      style={{
+                        gridRow: `${getGridRow(classBlock.startTime)} / span ${getGridSpan(classBlock.startTime, classBlock.endTime)}`,
+                        minHeight: '60px'
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        {getIcon(classBlock.icon)}
+                        <span className="text-xs font-bold">{classBlock.code}</span>
+                      </div>
+                      <div className="text-xs font-semibold leading-tight mb-2">
+                        {classBlock.subject}
+                      </div>
+                      <div className="text-xs opacity-80 font-medium bg-white/30 rounded-lg px-2 py-1">
+                        {`${formatTime(classBlock.startTime)} - ${formatTime(classBlock.endTime)}`}
+                      </div>
+                    </div>
+                  ))}
                   
-                  {/* Day Column with Classes */}
-                  <div className="relative h-full">
-                    {scheduleData[day]?.map((classBlock, index) => (
-                      <div
-                        key={index}
-                        className={`absolute w-full rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${getColorClasses(classBlock.color)}`}
-                        style={{
-                          top: `${getTopPosition(classBlock.startTime)}%`,
-                          height: `${getHeight(classBlock.startTime, classBlock.endTime)}%`,
-                          minHeight: '80px'
-                        }}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          {getIcon(classBlock.icon)}
-                          <span className="text-xs font-bold">{classBlock.code}</span>
-                        </div>
-                        <div className="text-xs font-semibold leading-tight mb-2">
-                          {classBlock.subject}
-                        </div>
-                        <div className="text-xs opacity-80 font-medium bg-white/30 rounded-lg px-2 py-1">
-                          {`${formatTime(classBlock.startTime)} - ${formatTime(classBlock.endTime)}`}
-                        </div>
+                  {/* Empty day message */}
+                  {scheduleData[day]?.length === 0 && (
+                    <div 
+                      className="flex items-center justify-center text-gray-400 text-sm"
+                      style={{ gridRow: `${Math.floor(timeSlots.length / 2)} / span 2` }}
+                    >
+                      <div className="text-center">
+                        <span className="text-2xl">🌸</span>
+                        <p className="text-xs mt-1">Free day!</p>
                       </div>
-                    ))}
-                    
-                    {/* Empty day message */}
-                    {scheduleData[day]?.length === 0 && (
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-400 text-sm">
-                        <div className="text-center">
-                          <span className="text-2xl">🌸</span>
-                          <p className="text-xs mt-1">Free day!</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
