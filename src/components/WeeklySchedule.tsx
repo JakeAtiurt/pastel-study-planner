@@ -16,35 +16,32 @@ interface ScheduleData {
 
 const WeeklySchedule = () => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-  const timeSlots = Array.from({ length: 12 }, (_, i) => i + 8); // 8:00 to 19:00
+  const timeSlots = Array.from({ length: 24 }, (_, i) => 8 + i * 0.5); // 8:00 to 19:30 in 30-min intervals
 
   const scheduleData: ScheduleData = {
-    Monday: [
-      { subject: "Physics for Engineering", code: "SC133", startTime: 8, endTime: 10, color: "pink", icon: "sparkles" },
-      { subject: "Critical Thinking", code: "LAS101", startTime: 10, endTime: 12, color: "green", icon: "heart" },
-      { subject: "Fundamental Chemistry", code: "SC123", startTime: 13, endTime: 15, color: "purple", icon: "book" }
-    ],
+    Monday: [], // No classes
     Tuesday: [
-      { subject: "Fundamental of Calculus", code: "MA111", startTime: 9, endTime: 11, color: "blue", icon: "star" },
-      { subject: "Engineering Graphics", code: "ME100", startTime: 13, endTime: 15, color: "orange", icon: "palette" },
-      { subject: "Physics for Engineering Laboratory", code: "SC183", startTime: 15, endTime: 17, color: "pink", icon: "sparkles" }
+      { subject: "Physics for Engineering", code: "SC133", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
+      { subject: "Critical Thinking", code: "LAS101", startTime: 9.5, endTime: 12.5, color: "green", icon: "heart" }
     ],
     Wednesday: [
-      { subject: "Critical Thinking", code: "LAS101", startTime: 8, endTime: 10, color: "green", icon: "heart" },
-      { subject: "Fundamental of Calculus", code: "MA111", startTime: 10, endTime: 12, color: "blue", icon: "star" },
-      { subject: "Fundamental Chemistry Laboratory", code: "SC173", startTime: 14, endTime: 17, color: "purple", icon: "book" }
+      { subject: "Fundamental of Calculus", code: "MA111", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
+      { subject: "Fundamental Chemistry", code: "SC123", startTime: 11, endTime: 12.5, color: "purple", icon: "book" },
+      { subject: "Engineering Graphics", code: "ME100", startTime: 13.5, endTime: 15.5, color: "orange", icon: "palette" },
+      { subject: "Engineering Graphics", code: "ME100", startTime: 15.5, endTime: 18.5, color: "orange", icon: "palette" }
     ],
     Thursday: [
-      { subject: "Physics for Engineering", code: "SC133", startTime: 9, endTime: 11, color: "pink", icon: "sparkles" },
-      { subject: "Innovation and Entrepreneurial Mindset", code: "TU109", startTime: 13, endTime: 15, color: "yellow", icon: "coffee" },
-      { subject: "Ethic for Engineering", code: "TSE100", startTime: 15, endTime: 17, color: "blue", icon: "heart" }
+      { subject: "Physics for Engineering", code: "SC133", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
+      { subject: "Physics Lab", code: "SC183", startTime: 9.5, endTime: 12.5, color: "pink", icon: "sparkles" },
+      { subject: "Innovation & Entrepreneurial Mindset", code: "TU109", startTime: 13.5, endTime: 16.5, color: "yellow", icon: "coffee" }
     ],
     Friday: [
-      { subject: "Engineering Graphics", code: "ME100", startTime: 8, endTime: 11, color: "orange", icon: "palette" },
-      { subject: "Fundamental Chemistry", code: "SC123", startTime: 13, endTime: 15, color: "purple", icon: "book" }
+      { subject: "Fundamental of Calculus", code: "MA111", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
+      { subject: "Fundamental Chemistry", code: "SC123", startTime: 11, endTime: 12.5, color: "purple", icon: "book" },
+      { subject: "Chemistry Lab", code: "SC173", startTime: 13.5, endTime: 16.5, color: "purple", icon: "book" }
     ],
-    Saturday: [],
-    Sunday: []
+    Saturday: [], // No classes
+    Sunday: [] // No classes
   };
 
   const getIcon = (iconType: string) => {
@@ -71,6 +68,12 @@ const WeeklySchedule = () => {
     return colorMap[color as keyof typeof colorMap] || colorMap.pink;
   };
 
+  const formatTime = (time: number) => {
+    const hours = Math.floor(time);
+    const minutes = (time % 1) * 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  };
+
   const renderTimeGrid = () => {
     return (
       <div className="grid grid-cols-8 gap-2">
@@ -88,9 +91,9 @@ const WeeklySchedule = () => {
         {timeSlots.map((hour) => (
           <React.Fragment key={hour}>
             {/* Time label */}
-            <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-sm border border-pastel-pink-border">
-              <div className="text-center text-sm font-medium text-muted-foreground">
-                {`${hour}:00 - ${hour + 1}:00`}
+            <div className="bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-sm border border-pastel-pink-border">
+              <div className="text-center text-xs font-medium text-muted-foreground">
+                {formatTime(hour)}
               </div>
             </div>
             
@@ -101,12 +104,12 @@ const WeeklySchedule = () => {
               );
               
               return (
-                <div key={`${day}-${hour}`} className="min-h-[60px] relative">
+                <div key={`${day}-${hour}`} className="min-h-[30px] relative">
                   {classForSlot && hour === classForSlot.startTime && (
                     <div 
                       className={`absolute inset-x-0 rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${getColorClasses(classForSlot.color)}`}
                       style={{
-                        height: `${(classForSlot.endTime - classForSlot.startTime) * 60 + (classForSlot.endTime - classForSlot.startTime - 1) * 8}px`,
+                        height: `${(classForSlot.endTime - classForSlot.startTime) * 60}px`,
                         zIndex: 10
                       }}
                     >
@@ -118,7 +121,7 @@ const WeeklySchedule = () => {
                         {classForSlot.subject}
                       </div>
                       <div className="text-xs opacity-75 mt-1">
-                        {`${classForSlot.startTime}:00-${classForSlot.endTime}:00`}
+                        {`${formatTime(classForSlot.startTime)}–${formatTime(classForSlot.endTime)}`}
                       </div>
                     </div>
                   )}
