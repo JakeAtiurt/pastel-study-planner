@@ -2,41 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Aesthetic Study Girl Design System - Soft Pastel Colors */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 330 25% 98%;
+    --foreground: 330 15% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 330 15% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 330 15% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 330 50% 85%;
+    --primary-foreground: 330 15% 25%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 200 50% 92%;
+    --secondary-foreground: 200 15% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 330 25% 96%;
+    --muted-foreground: 330 15% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 150 40% 92%;
+    --accent-foreground: 150 15% 25%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 85%;
+    --destructive-foreground: 0 15% 25%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 330 25% 90%;
+    --input: 330 25% 95%;
+    --ring: 330 50% 75%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
+
+    /* Pastel Schedule Colors */
+    --pastel-pink: 340 60% 92%;
+    --pastel-pink-border: 340 40% 85%;
+    --pastel-blue: 200 60% 92%;
+    --pastel-blue-border: 200 40% 85%;
+    --pastel-green: 150 50% 92%;
+    --pastel-green-border: 150 35% 85%;
+    --pastel-purple: 280 50% 92%;
+    --pastel-purple-border: 280 35% 85%;
+    --pastel-yellow: 45 70% 92%;
+    --pastel-yellow-border: 45 50% 85%;
+    --pastel-orange: 25 70% 92%;
+    --pastel-orange-border: 25 50% 85%;
+    
+    /* Gradients */
+    --gradient-soft: linear-gradient(135deg, hsl(var(--pastel-pink)), hsl(var(--pastel-blue)));
+    --gradient-header: linear-gradient(90deg, hsl(var(--pastel-purple)), hsl(var(--pastel-pink)));
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -8px hsl(330 50% 75% / 0.3);
+    --shadow-card: 0 2px 12px -4px hsl(330 30% 60% / 0.2);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
