@@ -107,57 +107,57 @@ const WeeklySchedule = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-3 md:p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-2">
+        {/* Header - Compact */}
+        <div className="text-center mb-4 md:mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-2">
             🎀 My Uni Schedule 🎀
           </h1>
-          <p className="text-gray-600 text-lg">Stay cute, stay productive! ✨</p>
+          <p className="text-gray-600 text-base md:text-lg">Stay cute, stay productive! ✨</p>
         </div>
 
         {/* Main Layout */}
         <div className="flex gap-6">
-          {/* Kawaii Sidebar */}
-          <div className="hidden md:flex flex-col items-center bg-gradient-to-b from-pink-100 to-purple-100 rounded-3xl p-6 shadow-xl border-2 border-pink-200 w-48">
-            <div className="text-center mb-6">
-              <p className="text-sm font-semibold text-purple-700 mb-4 writing-mode-vertical-rl text-orientation-mixed rotate-180">
+          {/* Kawaii Sidebar - Made Thinner */}
+          <div className="hidden md:flex flex-col items-center bg-gradient-to-b from-pink-100 to-purple-100 rounded-3xl p-4 shadow-xl border-2 border-pink-200 w-36">
+            <div className="text-center mb-4">
+              <p className="text-xs font-semibold text-purple-700 mb-3 writing-mode-vertical-rl text-orientation-mixed rotate-180">
                 ✨ Learn. Grow. Glow. ✨
               </p>
             </div>
             
-            {/* Kawaii Sticker Stack */}
-            <div className="flex flex-col items-center space-y-4">
-              <div className="bg-yellow-100 rounded-full p-3 shadow-lg border-2 border-yellow-200 transform rotate-12">
-                <span className="text-2xl">✏️</span>
+            {/* Kawaii Sticker Stack - Compact */}
+            <div className="flex flex-col items-center space-y-3">
+              <div className="bg-yellow-100 rounded-full p-2 shadow-lg border-2 border-yellow-200 transform rotate-12">
+                <span className="text-xl">✏️</span>
               </div>
-              <div className="bg-blue-100 rounded-full p-3 shadow-lg border-2 border-blue-200 transform -rotate-6">
-                <span className="text-2xl">📒</span>
+              <div className="bg-blue-100 rounded-full p-2 shadow-lg border-2 border-blue-200 transform -rotate-6">
+                <span className="text-xl">📒</span>
               </div>
-              <div className="bg-pink-100 rounded-full p-3 shadow-lg border-2 border-pink-200 transform rotate-6">
-                <span className="text-2xl">✨</span>
+              <div className="bg-pink-100 rounded-full p-2 shadow-lg border-2 border-pink-200 transform rotate-6">
+                <span className="text-xl">✨</span>
               </div>
-              <div className="bg-purple-100 rounded-full p-3 shadow-lg border-2 border-purple-200 transform -rotate-12">
-                <span className="text-2xl">💗</span>
+              <div className="bg-purple-100 rounded-full p-2 shadow-lg border-2 border-purple-200 transform -rotate-12">
+                <span className="text-xl">💗</span>
               </div>
-              <div className="bg-green-100 rounded-full p-3 shadow-lg border-2 border-green-200 transform rotate-3">
-                <span className="text-2xl">🌸</span>
+              <div className="bg-green-100 rounded-full p-2 shadow-lg border-2 border-green-200 transform rotate-3">
+                <span className="text-xl">🌸</span>
               </div>
             </div>
 
-            <div className="mt-6 text-center">
+            <div className="mt-4 text-center">
               <p className="text-xs text-purple-600 font-medium">Aug 5 - Aug 11</p>
               <p className="text-xs text-gray-500">Week 32</p>
             </div>
           </div>
 
-          {/* Schedule Grid */}
-          <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-2xl border border-white/50">
-            {/* Day Headers */}
-            <div className="grid grid-cols-7 gap-4 md:gap-6 mb-6">
+          {/* Schedule Grid - More Compact */}
+          <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-2xl border border-white/50">
+            {/* Day Headers - Compact */}
+            <div className="grid grid-cols-7 gap-3 md:gap-4 mb-4">
               {days.map((day) => (
-                <div key={day} className="bg-gradient-to-r from-pastel-purple to-pastel-pink p-4 rounded-3xl shadow-lg">
+                <div key={day} className="bg-gradient-to-r from-pastel-purple to-pastel-pink p-3 rounded-2xl shadow-lg">
                   <h3 className="font-semibold text-purple-700 text-sm md:text-base text-center">
                     {day}
                   </h3>
@@ -165,13 +165,13 @@ const WeeklySchedule = () => {
               ))}
             </div>
 
-            {/* Grid Container with Time Slots */}
-            <div className="grid grid-cols-7 gap-4 md:gap-6 relative">
+            {/* Grid Container with Compact Time Slots */}
+            <div className="grid grid-cols-7 gap-3 md:gap-4 relative">
               {/* Subtle background pattern */}
-              <div className="absolute inset-0 pointer-events-none opacity-20">
+              <div className="absolute inset-0 pointer-events-none opacity-15">
                 <div 
-                  className="grid grid-cols-7 gap-4 md:gap-6 h-full"
-                  style={{ gridTemplateRows: `repeat(${relevantTimeSlots.length}, 50px)` }}
+                  className="grid grid-cols-7 gap-3 md:gap-4 h-full"
+                  style={{ gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)` }}
                 >
                   {Array.from({ length: 7 * relevantTimeSlots.length }).map((_, index) => (
                     <div 
@@ -182,55 +182,55 @@ const WeeklySchedule = () => {
                 </div>
               </div>
 
-              {/* Day Columns */}
+              {/* Day Columns - Compact */}
               {days.map((day, dayIndex) => (
                 <div 
                   key={day} 
                   className="relative"
                   style={{ 
                     display: 'grid',
-                    gridTemplateRows: `repeat(${relevantTimeSlots.length}, 50px)`,
-                    gap: '8px',
-                    minHeight: `${relevantTimeSlots.length * 58}px`
+                    gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)`,
+                    gap: '4px',
+                    minHeight: `${relevantTimeSlots.length * 39}px`
                   }}
                 >
                   {/* Subject Background Tints */}
                   {scheduleData[day]?.length > 0 && (
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent rounded-2xl"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent rounded-2xl"></div>
                   )}
 
-                  {/* Class Cards */}
+                  {/* Class Cards - Compact */}
                   {scheduleData[day]?.map((classBlock, index) => (
                     <div
                       key={index}
-                      className={`rounded-3xl border-2 p-4 shadow-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
+                      className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
                       style={{
                         gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(1, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
-                        minHeight: '80px'
+                        minHeight: '60px'
                       }}
                     >
                       {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-3xl"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
                       
                       <div className="relative">
-                        {/* Course Code and Icon */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="p-1.5 bg-white/40 rounded-full">
+                        {/* Course Code and Icon - Compact */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="p-1 bg-white/40 rounded-full">
                             {getIcon(classBlock.icon)}
                           </div>
                           <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
                         </div>
                         
-                        {/* Subject Name - Abbreviated for space */}
-                        <div className="text-xs font-medium leading-tight mb-3 line-clamp-2">
-                          {classBlock.subject.length > 25 ? 
-                            classBlock.subject.substring(0, 22) + "..." : 
+                        {/* Subject Name - More compact */}
+                        <div className="text-xs font-medium leading-tight mb-2 line-clamp-2">
+                          {classBlock.subject.length > 20 ? 
+                            classBlock.subject.substring(0, 18) + "..." : 
                             classBlock.subject
                           }
                         </div>
                         
-                        {/* Time Badge */}
-                        <div className="inline-flex text-xs font-medium bg-white/50 backdrop-blur-sm rounded-full px-3 py-1 border border-white/30">
+                        {/* Time Badge - Smaller */}
+                        <div className="inline-flex text-xs font-medium bg-white/50 backdrop-blur-sm rounded-full px-2 py-1 border border-white/30">
                           {`${formatTime(classBlock.startTime)}–${formatTime(classBlock.endTime)}`}
                         </div>
                       </div>
@@ -243,7 +243,7 @@ const WeeklySchedule = () => {
                       className="flex items-center justify-center text-gray-300"
                       style={{ gridRow: `${Math.floor(relevantTimeSlots.length / 2)} / span 1` }}
                     >
-                      <span className="text-3xl opacity-60">🌸</span>
+                      <span className="text-2xl opacity-50">🌸</span>
                     </div>
                   )}
                 </div>
@@ -252,8 +252,8 @@ const WeeklySchedule = () => {
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="mt-6 bg-white/70 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-xl border border-white/50">
+        {/* Legend - Compact Bottom Margin */}
+        <div className="mt-4 bg-white/70 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-xl border border-white/50">
           <h3 className="text-lg font-semibold text-center mb-4 text-purple-700">Subject Colors 🎨</h3>
           <div className="flex flex-wrap justify-center gap-3">
             {[
