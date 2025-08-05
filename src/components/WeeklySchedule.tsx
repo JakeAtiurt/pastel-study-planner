@@ -20,26 +20,28 @@ const WeeklySchedule = () => {
 
   const scheduleData: ScheduleData = {
     Monday: [
-      { subject: "Computer Science", code: "SC133", startTime: 8, endTime: 10, color: "pink", icon: "book" },
-      { subject: "Liberal Arts", code: "LAS101", startTime: 10, endTime: 12, color: "green", icon: "heart" }
+      { subject: "Physics for Engineering", code: "SC133", startTime: 8, endTime: 10, color: "pink", icon: "sparkles" },
+      { subject: "Critical Thinking", code: "LAS101", startTime: 10, endTime: 12, color: "green", icon: "heart" },
+      { subject: "Fundamental Chemistry", code: "SC123", startTime: 13, endTime: 15, color: "purple", icon: "book" }
     ],
     Tuesday: [
-      { subject: "Computer Science", code: "SC134", startTime: 8, endTime: 10, color: "pink", icon: "book" },
-      { subject: "Mathematics", code: "MATH", startTime: 10, endTime: 12, color: "blue", icon: "star" },
-      { subject: "Statistics", code: "SC123", startTime: 12, endTime: 13, color: "purple", icon: "sparkles" }
+      { subject: "Fundamental of Calculus", code: "MA111", startTime: 9, endTime: 11, color: "blue", icon: "star" },
+      { subject: "Engineering Graphics", code: "ME100", startTime: 13, endTime: 15, color: "orange", icon: "palette" },
+      { subject: "Physics for Engineering Laboratory", code: "SC183", startTime: 15, endTime: 17, color: "pink", icon: "sparkles" }
     ],
     Wednesday: [
-      { subject: "Mathematics", code: "MATH", startTime: 10, endTime: 12, color: "blue", icon: "star" },
-      { subject: "Statistics", code: "SC123", startTime: 12, endTime: 13, color: "purple", icon: "sparkles" }
+      { subject: "Critical Thinking", code: "LAS101", startTime: 8, endTime: 10, color: "green", icon: "heart" },
+      { subject: "Fundamental of Calculus", code: "MA111", startTime: 10, endTime: 12, color: "blue", icon: "star" },
+      { subject: "Fundamental Chemistry Laboratory", code: "SC173", startTime: 14, endTime: 17, color: "purple", icon: "book" }
     ],
     Thursday: [
-      { subject: "Statistics", code: "SC183", startTime: 8, endTime: 10, color: "purple", icon: "sparkles" },
-      { subject: "Tourism", code: "TU109", startTime: 13, endTime: 16, color: "blue", icon: "coffee" },
-      { subject: "Statistics", code: "SC173", startTime: 16, endTime: 18, color: "purple", icon: "sparkles" }
+      { subject: "Physics for Engineering", code: "SC133", startTime: 9, endTime: 11, color: "pink", icon: "sparkles" },
+      { subject: "Innovation and Entrepreneurial Mindset", code: "TU109", startTime: 13, endTime: 15, color: "yellow", icon: "coffee" },
+      { subject: "Ethic for Engineering", code: "TSE100", startTime: 15, endTime: 17, color: "blue", icon: "heart" }
     ],
     Friday: [
-      { subject: "Mechanical Engineering", code: "ME100", startTime: 11, endTime: 13, color: "orange", icon: "palette" },
-      { subject: "Mechanical Engineering", code: "ME100", startTime: 15, endTime: 17, color: "orange", icon: "palette" }
+      { subject: "Engineering Graphics", code: "ME100", startTime: 8, endTime: 11, color: "orange", icon: "palette" },
+      { subject: "Fundamental Chemistry", code: "SC123", startTime: 13, endTime: 15, color: "purple", icon: "book" }
     ],
     Saturday: [],
     Sunday: []
@@ -150,11 +152,12 @@ const WeeklySchedule = () => {
           <h3 className="text-lg font-semibold text-center mb-4 text-purple-700">Subject Colors 🎨</h3>
           <div className="flex flex-wrap justify-center gap-4">
             {[
-              { color: "pink", subject: "Computer Science", icon: "book" },
-              { color: "blue", subject: "Mathematics & Tourism", icon: "star" },
-              { color: "green", subject: "Liberal Arts", icon: "heart" },
-              { color: "purple", subject: "Statistics", icon: "sparkles" },
-              { color: "orange", subject: "Mechanical Engineering", icon: "palette" }
+              { color: "pink", subject: "Physics & Laboratory", icon: "sparkles" },
+              { color: "blue", subject: "Mathematics & Ethics", icon: "star" },
+              { color: "green", subject: "Critical Thinking", icon: "heart" },
+              { color: "purple", subject: "Chemistry & Laboratory", icon: "book" },
+              { color: "orange", subject: "Engineering Graphics", icon: "palette" },
+              { color: "yellow", subject: "Innovation & Entrepreneurship", icon: "coffee" }
             ].map((item) => (
               <div key={item.color} className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 ${getColorClasses(item.color)}`}>
                 {getIcon(item.icon)}
