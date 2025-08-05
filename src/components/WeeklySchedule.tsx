@@ -74,16 +74,35 @@ const WeeklySchedule = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  // Create time slots from 8:00 to 19:00 in 30-minute increments
+  // Create optimized time slots - only show relevant hours (8:00 to 19:00)
   const timeSlots = Array.from({ length: 22 }, (_, i) => 8 + i * 0.5);
+  
+  // Get all class times to determine which slots we actually need
+  const getAllClassTimes = () => {
+    const times = new Set<number>();
+    Object.values(scheduleData).forEach(dayClasses => {
+      dayClasses.forEach(classBlock => {
+        for (let time = classBlock.startTime; time < classBlock.endTime; time += 0.5) {
+          times.add(time);
+        }
+      });
+    });
+    return Array.from(times).sort((a, b) => a - b);
+  };
+
+  const activeTimeSlots = getAllClassTimes();
+  const minTime = Math.max(8, Math.min(...activeTimeSlots) - 0.5);
+  const maxTime = Math.min(19, Math.max(...activeTimeSlots) + 0.5);
+  const relevantTimeSlots = timeSlots.filter(time => time >= minTime && time <= maxTime);
 
   const getGridRow = (startTime: number) => {
-    // Convert time to grid row (1-based indexing)
-    return Math.round((startTime - 8) * 2) + 1;
+    // Convert time to grid row based on relevant slots
+    const index = relevantTimeSlots.findIndex(slot => slot >= startTime);
+    return index + 1;
   };
 
   const getGridSpan = (startTime: number, endTime: number) => {
-    // Calculate how many 30-minute slots this class spans
+    // Calculate span more accurately
     return Math.round((endTime - startTime) * 2);
   };
 
@@ -134,11 +153,11 @@ const WeeklySchedule = () => {
           </div>
 
           {/* Schedule Grid */}
-          <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-2xl border border-white/50">
+          <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-2xl border border-white/50">
             {/* Day Headers */}
-            <div className="grid grid-cols-7 gap-2 md:gap-4 mb-4">
+            <div className="grid grid-cols-7 gap-4 md:gap-6 mb-6">
               {days.map((day) => (
-                <div key={day} className="bg-gradient-to-r from-pastel-purple to-pastel-pink p-3 rounded-2xl shadow-lg">
+                <div key={day} className="bg-gradient-to-r from-pastel-purple to-pastel-pink p-4 rounded-3xl shadow-lg">
                   <h3 className="font-semibold text-purple-700 text-sm md:text-base text-center">
                     {day}
                   </h3>
@@ -147,17 +166,17 @@ const WeeklySchedule = () => {
             </div>
 
             {/* Grid Container with Time Slots */}
-            <div className="grid grid-cols-7 gap-2 md:gap-4 relative">
-              {/* Background Grid Lines */}
-              <div className="absolute inset-0 pointer-events-none">
+            <div className="grid grid-cols-7 gap-4 md:gap-6 relative">
+              {/* Subtle background pattern */}
+              <div className="absolute inset-0 pointer-events-none opacity-20">
                 <div 
-                  className="grid grid-cols-7 gap-2 md:gap-4 h-full"
-                  style={{ gridTemplateRows: `repeat(${timeSlots.length}, 30px)` }}
+                  className="grid grid-cols-7 gap-4 md:gap-6 h-full"
+                  style={{ gridTemplateRows: `repeat(${relevantTimeSlots.length}, 50px)` }}
                 >
-                  {Array.from({ length: 7 * timeSlots.length }).map((_, index) => (
+                  {Array.from({ length: 7 * relevantTimeSlots.length }).map((_, index) => (
                     <div 
                       key={index} 
-                      className="border-dashed border-gray-200 border-b border-r opacity-30"
+                      className="border-dashed border-gray-300 border-b last:border-b-0"
                     />
                   ))}
                 </div>
@@ -170,43 +189,61 @@ const WeeklySchedule = () => {
                   className="relative"
                   style={{ 
                     display: 'grid',
-                    gridTemplateRows: `repeat(${timeSlots.length}, 30px)`,
-                    minHeight: `${timeSlots.length * 30}px`
+                    gridTemplateRows: `repeat(${relevantTimeSlots.length}, 50px)`,
+                    gap: '8px',
+                    minHeight: `${relevantTimeSlots.length * 58}px`
                   }}
                 >
+                  {/* Subject Background Tints */}
+                  {scheduleData[day]?.length > 0 && (
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent rounded-2xl"></div>
+                  )}
+
                   {/* Class Cards */}
                   {scheduleData[day]?.map((classBlock, index) => (
                     <div
                       key={index}
-                      className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl ${getColorClasses(classBlock.color)} z-10`}
+                      className={`rounded-3xl border-2 p-4 shadow-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
                       style={{
-                        gridRow: `${getGridRow(classBlock.startTime)} / span ${getGridSpan(classBlock.startTime, classBlock.endTime)}`,
-                        minHeight: '60px'
+                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(1, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
+                        minHeight: '80px'
                       }}
                     >
-                      <div className="flex items-center gap-2 mb-2">
-                        {getIcon(classBlock.icon)}
-                        <span className="text-xs font-bold">{classBlock.code}</span>
-                      </div>
-                      <div className="text-xs font-semibold leading-tight mb-2">
-                        {classBlock.subject}
-                      </div>
-                      <div className="text-xs opacity-80 font-medium bg-white/30 rounded-lg px-2 py-1">
-                        {`${formatTime(classBlock.startTime)} - ${formatTime(classBlock.endTime)}`}
+                      {/* Subtle gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-3xl"></div>
+                      
+                      <div className="relative">
+                        {/* Course Code and Icon */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="p-1.5 bg-white/40 rounded-full">
+                            {getIcon(classBlock.icon)}
+                          </div>
+                          <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
+                        </div>
+                        
+                        {/* Subject Name - Abbreviated for space */}
+                        <div className="text-xs font-medium leading-tight mb-3 line-clamp-2">
+                          {classBlock.subject.length > 25 ? 
+                            classBlock.subject.substring(0, 22) + "..." : 
+                            classBlock.subject
+                          }
+                        </div>
+                        
+                        {/* Time Badge */}
+                        <div className="inline-flex text-xs font-medium bg-white/50 backdrop-blur-sm rounded-full px-3 py-1 border border-white/30">
+                          {`${formatTime(classBlock.startTime)}–${formatTime(classBlock.endTime)}`}
+                        </div>
                       </div>
                     </div>
                   ))}
                   
-                  {/* Empty day message */}
+                  {/* Simplified Empty Day */}
                   {scheduleData[day]?.length === 0 && (
                     <div 
-                      className="flex items-center justify-center text-gray-400 text-sm"
-                      style={{ gridRow: `${Math.floor(timeSlots.length / 2)} / span 2` }}
+                      className="flex items-center justify-center text-gray-300"
+                      style={{ gridRow: `${Math.floor(relevantTimeSlots.length / 2)} / span 1` }}
                     >
-                      <div className="text-center">
-                        <span className="text-2xl">🌸</span>
-                        <p className="text-xs mt-1">Free day!</p>
-                      </div>
+                      <span className="text-3xl opacity-60">🌸</span>
                     </div>
                   )}
                 </div>
