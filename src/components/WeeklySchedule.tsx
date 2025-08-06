@@ -199,40 +199,38 @@ const WeeklySchedule = () => {
                     <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent rounded-2xl"></div>
                   )}
 
-                   {/* Class Cards - Improved Layout */}
+                   {/* Class Cards - Enhanced Layout with Clear Time Display */}
                   {scheduleData[day]?.map((classBlock, index) => (
                     <div
                       key={index}
-                      className={`rounded-2xl border-2 p-4 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
+                      className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
                       style={{
-                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(2, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
-                        minHeight: '120px'
+                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(3, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
+                        minHeight: '140px'
                       }}
                     >
                       {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
                       
-                      <div className="relative h-full flex flex-col justify-between">
-                        {/* Top Section: Course Code and Icon */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-lg">{getEmojiIcon(classBlock.icon)}</span>
+                      <div className="relative h-full flex flex-col">
+                        {/* Top Section: Icon and Course Code */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xl">{getEmojiIcon(classBlock.icon)}</span>
                           <div className="flex flex-col">
                             <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
-                            {classBlock.section && (
-                              <span className="text-xs opacity-75 font-medium">Sec {classBlock.section}</span>
-                            )}
+                            <span className="text-xs opacity-75 font-medium">Sec {classBlock.section}</span>
                           </div>
                         </div>
                         
-                        {/* Middle Section: Subject Name */}
-                        <div className="text-xs font-medium leading-tight mb-3 flex-1">
+                        {/* Middle Section: Subject Name with better spacing */}
+                        <div className="text-xs font-medium leading-relaxed mb-3 flex-1">
                           {classBlock.subject}
                         </div>
                         
-                        {/* Bottom Section: Time Badge */}
-                        <div className="mt-auto">
-                          <div className="inline-flex text-xs font-bold bg-white/70 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/40 shadow-sm">
-                            {`${formatTime(classBlock.startTime)}–${formatTime(classBlock.endTime)}`}
+                        {/* Bottom Section: Clear Time Display */}
+                        <div className="mt-auto pt-2 border-t border-white/20">
+                          <div className="bg-white/90 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 shadow-sm border border-white/60 text-center">
+                            {`${formatTime(classBlock.startTime)} – ${formatTime(classBlock.endTime)}`}
                           </div>
                         </div>
                       </div>
