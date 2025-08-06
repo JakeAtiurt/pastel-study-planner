@@ -1,4 +1,4 @@
-import InteractiveSchedule from "../components/InteractiveSchedule";
+import InteractiveSchedule from "../components/InteractiveScheduleWrapper";
 
 const Index = () => {
   return <InteractiveSchedule />;

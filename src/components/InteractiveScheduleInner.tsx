@@ -9,8 +9,8 @@ import {
   Node,
   Background,
   Controls,
-  MiniMap,
   NodeTypes,
+  useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import ClassNode from './ClassNode';
@@ -30,7 +30,7 @@ const nodeTypes: NodeTypes = {
   classNode: ClassNode,
 };
 
-const InteractiveSchedule = () => {
+const InteractiveScheduleInner = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
 
@@ -126,7 +126,7 @@ const InteractiveSchedule = () => {
             width: 180,
             height: Math.max(height, 160),
           },
-          dragHandle: '.drag-handle',
+          // Enable full dragging by not restricting drag handle
         });
       });
     });
@@ -147,55 +147,57 @@ const InteractiveSchedule = () => {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
-  const onDrop = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
+  const addNewClass = useCallback(() => {
+    const newNode: Node = {
+      id: `class-${Date.now()}`,
+      type: 'classNode',
+      position: { x: 300, y: 200 }, // Default position
+      data: {
+        subject: 'New Class',
+        code: 'NEW101',
+        section: '001',
+        startTime: 9,
+        endTime: 10.5,
+        color: 'blue',
+        icon: 'default',
+        classroom: 'TBD',
+      } as any,
+      style: {
+        width: 180,
+        height: 160,
+      },
+    };
 
-      if (!reactFlowInstance) return;
+    setNodes((nds) => [...nds, newNode]);
+  }, [setNodes]);
 
-      const type = event.dataTransfer.getData('application/reactflow');
-      if (!type) return;
-
-      const position = reactFlowInstance.screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-
-      const newNode: Node = {
-        id: `new-${Date.now()}`,
-        type: 'classNode',
-        position,
-        data: {
-          subject: 'New Class',
-          code: 'NEW101',
-          section: '001',
-          startTime: 9,
-          endTime: 10.5,
-          color: 'blue',
-          icon: 'default',
-          classroom: 'TBD',
-        },
-        style: {
-          width: 180,
-          height: 160,
-        },
-      };
-
-      setNodes((nds) => nds.concat(newNode));
-    },
-    [reactFlowInstance, setNodes],
-  );
+  const onNodeContextMenu = useCallback((event: React.MouseEvent, node: Node) => {
+    event.preventDefault();
+    
+    // Simple confirmation before deletion
+    if (node.type === 'classNode' && window.confirm('Delete this class?')) {
+      setNodes((nds) => nds.filter((n) => n.id !== node.id));
+    }
+  }, [setNodes]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-6">
+        {/* Header with Add Button */}
+        <div className="text-center mb-6 relative">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-2">
             🎀 Interactive Uni Schedule 🎀
           </h1>
           <p className="text-gray-600 text-lg">Drag, resize, and edit your classes! ✨</p>
-          <p className="text-sm text-gray-500 mt-2">💡 Double-click any class to edit • Drag to move • Select and resize</p>
+          <p className="text-sm text-gray-500 mt-2">💡 Double-click to edit • Drag to move • Select and resize • Right-click to delete</p>
+          
+          {/* Add New Class Button */}
+          <button
+            onClick={addNewClass}
+            className="absolute top-0 right-0 bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+          >
+            ➕ Add Class
+          </button>
         </div>
 
         {/* Interactive Schedule */}
@@ -211,14 +213,15 @@ const InteractiveSchedule = () => {
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
               onInit={setReactFlowInstance}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
+              onNodeContextMenu={onNodeContextMenu}
               nodeTypes={nodeTypes}
               fitView
               snapToGrid={true}
-              snapGrid={[15, 15]}
+              snapGrid={[20, 20]}
               style={{ background: 'transparent' }}
               deleteKeyCode={['Backspace', 'Delete']}
+              nodesDraggable={true}
+              nodesConnectable={false}
             >
               <Background gap={30} size={1} color="#E5E7EB" />
               <Controls 
@@ -228,14 +231,6 @@ const InteractiveSchedule = () => {
                   borderRadius: '12px',
                 }}
               />
-              <MiniMap 
-                style={{
-                  background: 'rgba(255, 255, 255, 0.9)',
-                  border: '2px solid #E8D5F5',
-                  borderRadius: '12px',
-                }}
-                nodeColor="#E8D5F5"
-              />
             </ReactFlow>
           </div>
         </div>
@@ -243,18 +238,22 @@ const InteractiveSchedule = () => {
         {/* Instructions */}
         <div className="mt-6 bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50">
           <h3 className="text-lg font-semibold text-center mb-4 text-purple-700">How to Use ✨</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
             <div className="text-center">
               <span className="text-2xl block mb-2">🖱️</span>
-              <p><strong>Move:</strong> Drag any class block to reposition it</p>
+              <p><strong>Move:</strong> Drag any class block anywhere</p>
             </div>
             <div className="text-center">
               <span className="text-2xl block mb-2">📏</span>
-              <p><strong>Resize:</strong> Select a class and drag the corners to resize</p>
+              <p><strong>Resize:</strong> Select a class and drag corners</p>
             </div>
             <div className="text-center">
               <span className="text-2xl block mb-2">✏️</span>
-              <p><strong>Edit:</strong> Double-click any class to edit details</p>
+              <p><strong>Edit:</strong> Double-click any class to edit</p>
+            </div>
+            <div className="text-center">
+              <span className="text-2xl block mb-2">🗑️</span>
+              <p><strong>Delete:</strong> Right-click and confirm deletion</p>
             </div>
           </div>
         </div>
@@ -263,4 +262,4 @@ const InteractiveSchedule = () => {
   );
 };
 
-export default InteractiveSchedule;
+export default InteractiveScheduleInner;
