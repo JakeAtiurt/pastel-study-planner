@@ -90,7 +90,23 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
         <div className="relative h-full flex flex-col">
           {/* Top Section: Icon and Course Code */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">{getEmojiIcon(editData.icon)}</span>
+            {isEditing ? (
+              <select
+                className="text-xl bg-transparent border border-current rounded outline-none cursor-pointer"
+                value={editData.icon}
+                onChange={(e) => setEditData({...editData, icon: e.target.value})}
+              >
+                <option value="physics">🌸</option>
+                <option value="math">📘</option>
+                <option value="chemistry">🧪</option>
+                <option value="engineering">⚙️</option>
+                <option value="thinking">🧠</option>
+                <option value="innovation">💡</option>
+                <option value="default">📚</option>
+              </select>
+            ) : (
+              <span className="text-xl">{getEmojiIcon(editData.icon)}</span>
+            )}
             <div className="flex flex-col flex-1">
               {isEditing ? (
                 <input
