@@ -207,7 +207,7 @@ const WeeklySchedule = () => {
                       className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
                       style={{
                         gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(1, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
-                        minHeight: '60px'
+                        minHeight: '80px'
                       }}
                     >
                       {/* Subtle gradient overlay */}
