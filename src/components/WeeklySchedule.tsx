@@ -238,7 +238,7 @@ const WeeklySchedule = () => {
                         </div>
                         
                         {/* Bottom Section: Clear Time Display */}
-                        <div className="mt-auto pt-2 border-t border-white/20">
+                        <div className="mt-auto pt-2 border-t border-white/20 pb-2">
                           <div className="bg-white/90 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 shadow-sm border border-white/60 text-center">
                             {`${formatTime(classBlock.startTime)} – ${formatTime(classBlock.endTime)}`}
                           </div>
