@@ -219,7 +219,12 @@ const WeeklySchedule = () => {
                           <div className="p-1 bg-white/40 rounded-full">
                             {getIcon(classBlock.icon)}
                           </div>
-                          <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
+                            {classBlock.section && (
+                              <span className="text-xs opacity-75">Sec {classBlock.section}</span>
+                            )}
+                          </div>
                         </div>
                         
                         {/* Subject Name - Full text */}
