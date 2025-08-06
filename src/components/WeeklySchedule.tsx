@@ -58,12 +58,12 @@ const WeeklySchedule = () => {
 
   const getColorClasses = (color: string) => {
     const colorMap = {
-      pink: "bg-pink-100/80 border-pink-200 text-pink-900 shadow-pink-200/50",
-      blue: "bg-blue-100/80 border-blue-200 text-blue-900 shadow-blue-200/50", 
-      mint: "bg-emerald-100/80 border-emerald-200 text-emerald-900 shadow-emerald-200/50",
-      lavender: "bg-purple-100/80 border-purple-200 text-purple-900 shadow-purple-200/50",
-      yellow: "bg-amber-100/80 border-amber-200 text-amber-900 shadow-amber-200/50",
-      peach: "bg-orange-100/80 border-orange-200 text-orange-900 shadow-orange-200/50"
+      pink: "bg-pink-100/60 border-pink-200/70 text-pink-800 shadow-pink-100/40",
+      blue: "bg-blue-100/60 border-blue-200/70 text-blue-800 shadow-blue-100/40", 
+      mint: "bg-emerald-100/60 border-emerald-200/70 text-emerald-800 shadow-emerald-100/40",
+      lavender: "bg-purple-100/60 border-purple-200/70 text-purple-800 shadow-purple-100/40",
+      yellow: "bg-amber-100/60 border-amber-200/70 text-amber-800 shadow-amber-100/40",
+      peach: "bg-orange-100/60 border-orange-200/70 text-orange-800 shadow-orange-100/40"
     };
     return colorMap[color as keyof typeof colorMap] || colorMap.pink;
   };
@@ -99,12 +99,12 @@ const WeeklySchedule = () => {
     // Convert time to grid row based on relevant slots
     const baseIndex = relevantTimeSlots.findIndex(slot => slot >= startTime);
     
-    // Add small offset for consecutive classes to create visual separation
+    // Add offset for consecutive classes to create visual separation
     let offset = 0;
     if (currentIndex > 0) {
       const previousClass = dayClasses[currentIndex - 1];
       if (previousClass && previousClass.endTime === startTime) {
-        offset = 1; // Add 1 grid row gap for visual separation
+        offset = 2; // Increased spacing for better visual breathing room
       }
     }
     
@@ -211,40 +211,40 @@ const WeeklySchedule = () => {
 
                    {/* Class Cards - Enhanced Layout with Clear Time Display */}
                   {scheduleData[day]?.map((classBlock, index) => (
-                    <div
-                      key={index}
-                      className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
-                      style={{
-                        gridRow: `${getGridRow(classBlock.startTime, scheduleData[day], index)} / span ${Math.max(3, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
-                        minHeight: '140px'
-                      }}
-                    >
-                      {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
-                      
-                      <div className="relative h-full flex flex-col">
-                        {/* Top Section: Icon and Course Code */}
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xl">{getEmojiIcon(classBlock.icon)}</span>
-                          <div className="flex flex-col">
-                            <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
-                            <span className="text-xs opacity-75 font-medium">Sec {classBlock.section}</span>
-                          </div>
-                        </div>
-                        
-                        {/* Middle Section: Subject Name with better spacing */}
-                        <div className="text-xs font-medium leading-relaxed mb-3 flex-1">
-                          {classBlock.subject}
-                        </div>
-                        
-                        {/* Bottom Section: Clear Time Display */}
-                        <div className="mt-auto pt-2 border-t border-white/20">
-                          <div className="bg-white/90 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 shadow-sm border border-white/60 text-center">
-                            {`${formatTime(classBlock.startTime)} – ${formatTime(classBlock.endTime)}`}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                     <div
+                       key={index}
+                       className={`rounded-xl border p-2.5 shadow-md backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:-translate-y-0.5 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
+                       style={{
+                         gridRow: `${getGridRow(classBlock.startTime, scheduleData[day], index)} / span ${Math.max(3, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
+                         minHeight: '140px'
+                       }}
+                     >
+                       {/* Subtle gradient overlay */}
+                       <div className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent rounded-xl"></div>
+                       
+                       <div className="relative h-full flex flex-col">
+                         {/* Top Section: Icon and Course Code */}
+                         <div className="flex items-center gap-2 mb-2">
+                           <span className="text-lg">{getEmojiIcon(classBlock.icon)}</span>
+                           <div className="flex flex-col min-w-0 flex-1">
+                             <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
+                             <span className="text-xs opacity-70 font-medium">Sec {classBlock.section}</span>
+                           </div>
+                         </div>
+                         
+                         {/* Middle Section: Subject Name with better spacing */}
+                         <div className="text-xs font-medium leading-relaxed mb-2 flex-1 line-clamp-2">
+                           {classBlock.subject}
+                         </div>
+                         
+                         {/* Bottom Section: Clear Time Display */}
+                         <div className="mt-auto pt-1.5 border-t border-white/25">
+                           <div className="bg-white/95 text-gray-700 text-xs font-semibold rounded-md px-2 py-1 shadow-sm border border-white/80 text-center">
+                             {`${formatTime(classBlock.startTime)} – ${formatTime(classBlock.endTime)}`}
+                           </div>
+                         </div>
+                       </div>
+                     </div>
                   ))}
                   
                   {/* Cute Free Day Icons */}
