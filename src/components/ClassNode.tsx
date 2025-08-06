@@ -117,7 +117,7 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                   autoFocus
                 />
               ) : (
-                <span className="text-sm font-bold tracking-wide">{editData.code}</span>
+                <span className={`font-bold tracking-wide ${editData.code.length > 8 ? 'text-xs' : editData.code.length > 6 ? 'text-sm' : 'text-base'}`}>{editData.code}</span>
               )}
               
               {isEditing ? (
