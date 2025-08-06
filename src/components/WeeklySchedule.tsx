@@ -176,13 +176,13 @@ const WeeklySchedule = () => {
               ))}
             </div>
 
-            {/* Grid Container with Compact Time Slots */}
+            {/* Grid Container with Enhanced Spacing */}
             <div className="grid grid-cols-7 gap-3 md:gap-4 relative">
               {/* Subtle background pattern */}
               <div className="absolute inset-0 pointer-events-none opacity-15">
                 <div 
                   className="grid grid-cols-7 gap-3 md:gap-4 h-full"
-                  style={{ gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)` }}
+                  style={{ gridTemplateRows: `repeat(${relevantTimeSlots.length}, 42px)` }}
                 >
                   {Array.from({ length: 7 * relevantTimeSlots.length }).map((_, index) => (
                     <div 
@@ -193,16 +193,16 @@ const WeeklySchedule = () => {
                 </div>
               </div>
 
-              {/* Day Columns - Compact */}
+              {/* Day Columns - Enhanced Spacing */}
               {days.map((day, dayIndex) => (
                 <div 
                   key={day} 
                   className="relative"
                   style={{ 
                     display: 'grid',
-                    gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)`,
-                    gap: '4px',
-                    minHeight: `${relevantTimeSlots.length * 39}px`
+                    gridTemplateRows: `repeat(${relevantTimeSlots.length}, 42px)`,
+                    gap: '8px',
+                    minHeight: `${relevantTimeSlots.length * 50}px`
                   }}
                 >
                   {/* Subject Background Tints */}
