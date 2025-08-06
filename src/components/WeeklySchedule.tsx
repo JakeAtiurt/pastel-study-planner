@@ -95,10 +95,20 @@ const WeeklySchedule = () => {
   const maxTime = Math.min(19, Math.max(...activeTimeSlots) + 0.5);
   const relevantTimeSlots = timeSlots.filter(time => time >= minTime && time <= maxTime);
 
-  const getGridRow = (startTime: number) => {
+  const getGridRow = (startTime: number, dayClasses: ClassBlock[], currentIndex: number) => {
     // Convert time to grid row based on relevant slots
-    const index = relevantTimeSlots.findIndex(slot => slot >= startTime);
-    return index + 1;
+    const baseIndex = relevantTimeSlots.findIndex(slot => slot >= startTime);
+    
+    // Add small offset for consecutive classes to create visual separation
+    let offset = 0;
+    if (currentIndex > 0) {
+      const previousClass = dayClasses[currentIndex - 1];
+      if (previousClass && previousClass.endTime === startTime) {
+        offset = 1; // Add 1 grid row gap for visual separation
+      }
+    }
+    
+    return baseIndex + 1 + offset;
   };
 
   const getGridSpan = (startTime: number, endTime: number) => {
@@ -205,7 +215,7 @@ const WeeklySchedule = () => {
                       key={index}
                       className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
                       style={{
-                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(3, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
+                        gridRow: `${getGridRow(classBlock.startTime, scheduleData[day], index)} / span ${Math.max(3, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
                         minHeight: '140px'
                       }}
                     >
