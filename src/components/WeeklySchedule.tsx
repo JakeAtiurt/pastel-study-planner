@@ -74,19 +74,36 @@ const WeeklySchedule = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  // Create time slots from 8:00 to 19:00 in 30-minute intervals
-  const timeSlots = Array.from({ length: 23 }, (_, i) => 8 + i * 0.5); // 8:00 to 19:30
+  // Create optimized time slots - only show relevant hours (8:00 to 19:00)
+  const timeSlots = Array.from({ length: 22 }, (_, i) => 8 + i * 0.5);
+  
+  // Get all class times to determine which slots we actually need
+  const getAllClassTimes = () => {
+    const times = new Set<number>();
+    Object.values(scheduleData).forEach(dayClasses => {
+      dayClasses.forEach(classBlock => {
+        for (let time = classBlock.startTime; time < classBlock.endTime; time += 0.5) {
+          times.add(time);
+        }
+      });
+    });
+    return Array.from(times).sort((a, b) => a - b);
+  };
+
+  const activeTimeSlots = getAllClassTimes();
+  const minTime = Math.max(8, Math.min(...activeTimeSlots) - 0.5);
+  const maxTime = Math.min(19, Math.max(...activeTimeSlots) + 0.5);
+  const relevantTimeSlots = timeSlots.filter(time => time >= minTime && time <= maxTime);
 
   const getGridRow = (startTime: number) => {
-    // Convert time to grid row (each 30min = 1 row, starting from 8:00)
-    const slotIndex = Math.round((startTime - 8) * 2) + 1;
-    return Math.max(1, slotIndex);
+    // Convert time to grid row based on relevant slots
+    const index = relevantTimeSlots.findIndex(slot => slot >= startTime);
+    return index + 1;
   };
 
   const getGridSpan = (startTime: number, endTime: number) => {
-    // Each 30 minutes = 1 grid row
-    const duration = endTime - startTime;
-    return Math.max(1, Math.round(duration * 2));
+    // Calculate span more accurately
+    return Math.round((endTime - startTime) * 2);
   };
 
   return (
@@ -148,15 +165,15 @@ const WeeklySchedule = () => {
               ))}
             </div>
 
-            {/* Grid Container with Time-based Layout */}
+            {/* Grid Container with Compact Time Slots */}
             <div className="grid grid-cols-7 gap-3 md:gap-4 relative">
               {/* Subtle background pattern */}
               <div className="absolute inset-0 pointer-events-none opacity-15">
                 <div 
                   className="grid grid-cols-7 gap-3 md:gap-4 h-full"
-                  style={{ gridTemplateRows: `repeat(${timeSlots.length}, 40px)` }}
+                  style={{ gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)` }}
                 >
-                  {Array.from({ length: 7 * timeSlots.length }).map((_, index) => (
+                  {Array.from({ length: 7 * relevantTimeSlots.length }).map((_, index) => (
                     <div 
                       key={index} 
                       className="border-dashed border-gray-300 border-b last:border-b-0"
@@ -165,16 +182,16 @@ const WeeklySchedule = () => {
                 </div>
               </div>
 
-              {/* Day Columns */}
+              {/* Day Columns - Compact */}
               {days.map((day, dayIndex) => (
                 <div 
                   key={day} 
                   className="relative"
                   style={{ 
                     display: 'grid',
-                    gridTemplateRows: `repeat(${timeSlots.length}, 40px)`,
-                    gap: '2px',
-                    minHeight: `${timeSlots.length * 42}px`
+                    gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)`,
+                    gap: '4px',
+                    minHeight: `${relevantTimeSlots.length * 39}px`
                   }}
                 >
                   {/* Subject Background Tints */}
@@ -182,40 +199,38 @@ const WeeklySchedule = () => {
                     <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent rounded-2xl"></div>
                   )}
 
-                   {/* Class Cards - Improved Layout */}
+                   {/* Class Cards - Enhanced Layout with Clear Time Display */}
                   {scheduleData[day]?.map((classBlock, index) => (
                     <div
                       key={index}
-                      className={`rounded-2xl border-2 p-4 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
+                      className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
                       style={{
-                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(2, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
-                        minHeight: '120px'
+                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(3, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
+                        minHeight: '140px'
                       }}
                     >
                       {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
                       
-                      <div className="relative h-full flex flex-col justify-between">
-                        {/* Top Section: Course Code and Icon */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-lg">{getEmojiIcon(classBlock.icon)}</span>
+                      <div className="relative h-full flex flex-col">
+                        {/* Top Section: Icon and Course Code */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xl">{getEmojiIcon(classBlock.icon)}</span>
                           <div className="flex flex-col">
                             <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
-                            {classBlock.section && (
-                              <span className="text-xs opacity-75 font-medium">Sec {classBlock.section}</span>
-                            )}
+                            <span className="text-xs opacity-75 font-medium">Sec {classBlock.section}</span>
                           </div>
                         </div>
                         
-                        {/* Middle Section: Subject Name */}
-                        <div className="text-xs font-medium leading-tight mb-3 flex-1">
+                        {/* Middle Section: Subject Name with better spacing */}
+                        <div className="text-xs font-medium leading-relaxed mb-3 flex-1">
                           {classBlock.subject}
                         </div>
                         
-                        {/* Bottom Section: Time Badge */}
-                        <div className="mt-auto">
-                          <div className="inline-flex text-xs font-black bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 border-2 border-gray-300 shadow-md text-gray-800">
-                            {`${formatTime(classBlock.startTime)}–${formatTime(classBlock.endTime)}`}
+                        {/* Bottom Section: Clear Time Display */}
+                        <div className="mt-auto pt-2 border-t border-white/20">
+                          <div className="bg-white/90 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 shadow-sm border border-white/60 text-center">
+                            {`${formatTime(classBlock.startTime)} – ${formatTime(classBlock.endTime)}`}
                           </div>
                         </div>
                       </div>
@@ -226,7 +241,7 @@ const WeeklySchedule = () => {
                   {scheduleData[day]?.length === 0 && (
                     <div 
                       className="flex flex-col items-center justify-center text-gray-400 bg-white/30 rounded-2xl p-4 border-2 border-dashed border-gray-300"
-                      style={{ gridRow: `${Math.floor(timeSlots.length / 2)} / span 2` }}
+                      style={{ gridRow: `${Math.floor(relevantTimeSlots.length / 2)} / span 2` }}
                     >
                       <span className="text-3xl mb-2">
                         {day === 'Monday' ? '🌸' : day === 'Saturday' ? '🧠' : '📚'}
