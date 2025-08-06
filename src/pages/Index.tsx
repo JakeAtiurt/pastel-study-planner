@@ -1,7 +1,7 @@
-import WeeklySchedule from "../components/WeeklySchedule";
+import InteractiveSchedule from "../components/InteractiveSchedule";
 
 const Index = () => {
-  return <WeeklySchedule />;
+  return <InteractiveSchedule />;
 };
 
 export default Index;
