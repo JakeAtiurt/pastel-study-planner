@@ -231,7 +231,7 @@ const WeeklySchedule = () => {
                         
                         {/* Bottom Section: Time Badge */}
                         <div className="mt-auto">
-                          <div className="inline-flex text-xs font-bold bg-white/70 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/40 shadow-sm">
+                          <div className="inline-flex text-xs font-black bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 border-2 border-gray-300 shadow-md text-gray-800">
                             {`${formatTime(classBlock.startTime)}–${formatTime(classBlock.endTime)}`}
                           </div>
                         </div>
