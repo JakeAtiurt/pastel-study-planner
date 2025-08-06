@@ -150,20 +150,20 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
           <div className="mt-auto pt-2 border-t border-white/20 pb-2">
             <div className="bg-white/90 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 shadow-sm border border-white/60 text-center">
               {isEditing ? (
-                <div className="flex gap-1">
+                <div className="flex gap-1 items-center">
                   <input
                     type="time"
-                    className="bg-transparent text-xs"
+                    className="bg-white/90 text-gray-800 text-xs font-bold rounded px-1 py-0.5 border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400"
                     value={`${Math.floor(editData.startTime).toString().padStart(2, '0')}:${((editData.startTime % 1) * 60).toString().padStart(2, '0')}`}
                     onChange={(e) => {
                       const [hours, minutes] = e.target.value.split(':');
                       setEditData({...editData, startTime: parseInt(hours) + parseInt(minutes) / 60});
                     }}
                   />
-                  <span>–</span>
+                  <span className="text-gray-800 font-bold">–</span>
                   <input
                     type="time"
-                    className="bg-transparent text-xs"
+                    className="bg-white/90 text-gray-800 text-xs font-bold rounded px-1 py-0.5 border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400"
                     value={`${Math.floor(editData.endTime).toString().padStart(2, '0')}:${((editData.endTime % 1) * 60).toString().padStart(2, '0')}`}
                     onChange={(e) => {
                       const [hours, minutes] = e.target.value.split(':');
