@@ -21,50 +21,49 @@ const WeeklySchedule = () => {
   const scheduleData: ScheduleData = {
     Monday: [], // No classes
     Tuesday: [
-      { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
-      { subject: "Critical Thinking", code: "LAS101", section: "230009", startTime: 9.5, endTime: 12.5, color: "green", icon: "heart" }
+      { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "physics" },
+      { subject: "Critical Thinking", code: "LAS101", section: "230009", startTime: 9.5, endTime: 12.5, color: "mint", icon: "thinking" }
     ],
     Wednesday: [
-      { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
-      { subject: "Fundamental Chemistry", code: "SC123", section: "080001", startTime: 11, endTime: 12.5, color: "purple", icon: "testTube" },
-      { subject: "Engineering Graphics", code: "ME100", section: "908802", startTime: 13.5, endTime: 15.5, color: "orange", icon: "palette" },
-      { subject: "Engineering Graphics", code: "ME100", section: "908802", startTime: 15.5, endTime: 18.5, color: "orange", icon: "palette" }
+      { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "math" },
+      { subject: "Fundamental Chemistry", code: "SC123", section: "080001", startTime: 11, endTime: 12.5, color: "lavender", icon: "chemistry" },
+      { subject: "Engineering Graphics", code: "ME100", section: "908802", startTime: 13.5, endTime: 15.5, color: "peach", icon: "engineering" },
+      { subject: "Engineering Graphics", code: "ME100", section: "908802", startTime: 15.5, endTime: 18.5, color: "peach", icon: "engineering" }
     ],
     Thursday: [
-      { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
-      { subject: "Physics Lab", code: "SC183", section: "003201", startTime: 9.5, endTime: 12.5, color: "pink", icon: "sparkles" },
-      { subject: "Innovation and Entrepreneurial Mindset", code: "TU109", section: "540001", startTime: 13.5, endTime: 16.5, color: "yellow", icon: "coffee" }
+      { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "physics" },
+      { subject: "Physics Lab", code: "SC183", section: "003201", startTime: 9.5, endTime: 12.5, color: "pink", icon: "physics" },
+      { subject: "Innovation and Entrepreneurial Mindset", code: "TU109", section: "540001", startTime: 13.5, endTime: 16.5, color: "yellow", icon: "innovation" }
     ],
     Friday: [
-      { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
-      { subject: "Fundamental Chemistry", code: "SC123", section: "080001", startTime: 11, endTime: 12.5, color: "purple", icon: "testTube" },
-      { subject: "Chemistry Lab", code: "SC173", section: "", startTime: 13.5, endTime: 16.5, color: "purple", icon: "testTube" }
+      { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "math" },
+      { subject: "Fundamental Chemistry", code: "SC123", section: "080001", startTime: 11, endTime: 12.5, color: "lavender", icon: "chemistry" },
+      { subject: "Chemistry Lab", code: "SC173", section: "009101", startTime: 13.5, endTime: 16.5, color: "lavender", icon: "chemistry" }
     ],
     Saturday: [], // No classes
     Sunday: [] // No classes
   };
 
-  const getIcon = (iconType: string) => {
+  const getEmojiIcon = (iconType: string) => {
     switch (iconType) {
-      case "heart": return <Heart className="w-4 h-4" />;
-      case "book": return <Book className="w-4 h-4" />;
-      case "sparkles": return <Sparkles className="w-4 h-4" />;
-      case "star": return <Star className="w-4 h-4" />;
-      case "coffee": return <Coffee className="w-4 h-4" />;
-      case "palette": return <Palette className="w-4 h-4" />;
-      case "testTube": return <TestTube className="w-4 h-4" />;
-      default: return <Book className="w-4 h-4" />;
+      case "physics": return "🌸";
+      case "math": return "📘";
+      case "chemistry": return "🧪";
+      case "engineering": return "⚙️";
+      case "thinking": return "🧠";
+      case "innovation": return "💡";
+      default: return "📚";
     }
   };
 
   const getColorClasses = (color: string) => {
     const colorMap = {
-      pink: "bg-pastel-pink border-pastel-pink-border text-pink-800",
-      blue: "bg-pastel-blue border-pastel-blue-border text-blue-800",
-      green: "bg-pastel-green border-pastel-green-border text-green-800",
-      purple: "bg-pastel-purple border-pastel-purple-border text-purple-800",
-      yellow: "bg-pastel-yellow border-pastel-yellow-border text-yellow-800",
-      orange: "bg-pastel-orange border-pastel-orange-border text-orange-800"
+      pink: "bg-pink-100/80 border-pink-200 text-pink-900 shadow-pink-200/50",
+      blue: "bg-blue-100/80 border-blue-200 text-blue-900 shadow-blue-200/50", 
+      mint: "bg-emerald-100/80 border-emerald-200 text-emerald-900 shadow-emerald-200/50",
+      lavender: "bg-purple-100/80 border-purple-200 text-purple-900 shadow-purple-200/50",
+      yellow: "bg-amber-100/80 border-amber-200 text-amber-900 shadow-amber-200/50",
+      peach: "bg-orange-100/80 border-orange-200 text-orange-900 shadow-orange-200/50"
     };
     return colorMap[color as keyof typeof colorMap] || colorMap.pink;
   };
@@ -200,53 +199,56 @@ const WeeklySchedule = () => {
                     <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent rounded-2xl"></div>
                   )}
 
-                  {/* Class Cards - Compact */}
+                   {/* Class Cards - Improved Layout */}
                   {scheduleData[day]?.map((classBlock, index) => (
                     <div
                       key={index}
-                      className={`rounded-2xl border-2 p-3 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
+                      className={`rounded-2xl border-2 p-4 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 ${getColorClasses(classBlock.color)} z-10 relative overflow-hidden`}
                       style={{
-                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(1, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
-                        minHeight: '80px'
+                        gridRow: `${getGridRow(classBlock.startTime)} / span ${Math.max(2, getGridSpan(classBlock.startTime, classBlock.endTime))}`,
+                        minHeight: '120px'
                       }}
                     >
                       {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
                       
-                      <div className="relative">
-                        {/* Course Code and Icon - Compact */}
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1 bg-white/40 rounded-full">
-                            {getIcon(classBlock.icon)}
-                          </div>
+                      <div className="relative h-full flex flex-col justify-between">
+                        {/* Top Section: Course Code and Icon */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-lg">{getEmojiIcon(classBlock.icon)}</span>
                           <div className="flex flex-col">
                             <span className="text-sm font-bold tracking-wide">{classBlock.code}</span>
                             {classBlock.section && (
-                              <span className="text-xs opacity-75">Sec {classBlock.section}</span>
+                              <span className="text-xs opacity-75 font-medium">Sec {classBlock.section}</span>
                             )}
                           </div>
                         </div>
                         
-                        {/* Subject Name - Full text */}
-                        <div className="text-xs font-medium leading-tight mb-2 line-clamp-2">
+                        {/* Middle Section: Subject Name */}
+                        <div className="text-xs font-medium leading-tight mb-3 flex-1">
                           {classBlock.subject}
                         </div>
                         
-                        {/* Time Badge - Smaller */}
-                        <div className="inline-flex text-xs font-medium bg-white/50 backdrop-blur-sm rounded-full px-2 py-1 border border-white/30">
-                          {`${formatTime(classBlock.startTime)}–${formatTime(classBlock.endTime)}`}
+                        {/* Bottom Section: Time Badge */}
+                        <div className="mt-auto">
+                          <div className="inline-flex text-xs font-bold bg-white/70 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/40 shadow-sm">
+                            {`${formatTime(classBlock.startTime)}–${formatTime(classBlock.endTime)}`}
+                          </div>
                         </div>
                       </div>
                     </div>
                   ))}
                   
-                  {/* Simplified Empty Day */}
+                  {/* Cute Free Day Icons */}
                   {scheduleData[day]?.length === 0 && (
                     <div 
-                      className="flex items-center justify-center text-gray-300"
-                      style={{ gridRow: `${Math.floor(relevantTimeSlots.length / 2)} / span 1` }}
+                      className="flex flex-col items-center justify-center text-gray-400 bg-white/30 rounded-2xl p-4 border-2 border-dashed border-gray-300"
+                      style={{ gridRow: `${Math.floor(relevantTimeSlots.length / 2)} / span 2` }}
                     >
-                      <span className="text-2xl opacity-50">🌸</span>
+                      <span className="text-3xl mb-2">
+                        {day === 'Monday' ? '🌸' : day === 'Saturday' ? '🧠' : '📚'}
+                      </span>
+                      <span className="text-xs font-medium text-gray-500">Free Day</span>
                     </div>
                   )}
                 </div>
@@ -255,21 +257,21 @@ const WeeklySchedule = () => {
           </div>
         </div>
 
-        {/* Legend - Compact Bottom Margin */}
-        <div className="mt-4 bg-white/70 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-xl border border-white/50">
-          <h3 className="text-lg font-semibold text-center mb-4 text-purple-700">Subject Colors 🎨</h3>
-          <div className="flex flex-wrap justify-center gap-3">
+        {/* Legend - Emoji Style */}
+        <div className="mt-6 bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50">
+          <h3 className="text-lg font-semibold text-center mb-4 text-purple-700">Subject Legend ✨</h3>
+          <div className="flex flex-wrap justify-center gap-4">
             {[
-              { color: "pink", subject: "Physics & Lab", icon: "sparkles", emoji: "⚡" },
-              { color: "blue", subject: "Mathematics", icon: "star", emoji: "📐" },
-              { color: "green", subject: "Critical Thinking", icon: "heart", emoji: "💭" },
-              { color: "purple", subject: "Chemistry & Lab", icon: "testTube", emoji: "🧪" },
-              { color: "orange", subject: "Engineering Graphics", icon: "palette", emoji: "📐" },
-              { color: "yellow", subject: "Innovation", icon: "coffee", emoji: "💡" }
+              { color: "pink", subject: "Physics & Labs", emoji: "🌸" },
+              { color: "blue", subject: "Mathematics", emoji: "📘" },
+              { color: "mint", subject: "Critical Thinking", emoji: "🍃" },
+              { color: "lavender", subject: "Chemistry & Labs", emoji: "💜" },
+              { color: "peach", subject: "Engineering Graphics", emoji: "🍑" },
+              { color: "yellow", subject: "Innovation", emoji: "🍯" }
             ].map((item) => (
-              <div key={item.color} className={`flex items-center gap-2 px-3 py-2 rounded-full border-2 text-sm ${getColorClasses(item.color)}`}>
-                <span>{item.emoji}</span>
-                <span className="font-medium">{item.subject}</span>
+              <div key={item.color} className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 text-sm font-medium ${getColorClasses(item.color)}`}>
+                <span className="text-base">{item.emoji}</span>
+                <span>{item.subject}</span>
               </div>
             ))}
           </div>
