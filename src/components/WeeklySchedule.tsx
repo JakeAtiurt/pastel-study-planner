@@ -74,36 +74,19 @@ const WeeklySchedule = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  // Create optimized time slots - only show relevant hours (8:00 to 19:00)
-  const timeSlots = Array.from({ length: 22 }, (_, i) => 8 + i * 0.5);
-  
-  // Get all class times to determine which slots we actually need
-  const getAllClassTimes = () => {
-    const times = new Set<number>();
-    Object.values(scheduleData).forEach(dayClasses => {
-      dayClasses.forEach(classBlock => {
-        for (let time = classBlock.startTime; time < classBlock.endTime; time += 0.5) {
-          times.add(time);
-        }
-      });
-    });
-    return Array.from(times).sort((a, b) => a - b);
-  };
-
-  const activeTimeSlots = getAllClassTimes();
-  const minTime = Math.max(8, Math.min(...activeTimeSlots) - 0.5);
-  const maxTime = Math.min(19, Math.max(...activeTimeSlots) + 0.5);
-  const relevantTimeSlots = timeSlots.filter(time => time >= minTime && time <= maxTime);
+  // Create time slots from 8:00 to 19:00 in 30-minute intervals
+  const timeSlots = Array.from({ length: 23 }, (_, i) => 8 + i * 0.5); // 8:00 to 19:30
 
   const getGridRow = (startTime: number) => {
-    // Convert time to grid row based on relevant slots
-    const index = relevantTimeSlots.findIndex(slot => slot >= startTime);
-    return index + 1;
+    // Convert time to grid row (each 30min = 1 row, starting from 8:00)
+    const slotIndex = Math.round((startTime - 8) * 2) + 1;
+    return Math.max(1, slotIndex);
   };
 
   const getGridSpan = (startTime: number, endTime: number) => {
-    // Calculate span more accurately
-    return Math.round((endTime - startTime) * 2);
+    // Each 30 minutes = 1 grid row
+    const duration = endTime - startTime;
+    return Math.max(1, Math.round(duration * 2));
   };
 
   return (
@@ -165,15 +148,15 @@ const WeeklySchedule = () => {
               ))}
             </div>
 
-            {/* Grid Container with Compact Time Slots */}
+            {/* Grid Container with Time-based Layout */}
             <div className="grid grid-cols-7 gap-3 md:gap-4 relative">
               {/* Subtle background pattern */}
               <div className="absolute inset-0 pointer-events-none opacity-15">
                 <div 
                   className="grid grid-cols-7 gap-3 md:gap-4 h-full"
-                  style={{ gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)` }}
+                  style={{ gridTemplateRows: `repeat(${timeSlots.length}, 40px)` }}
                 >
-                  {Array.from({ length: 7 * relevantTimeSlots.length }).map((_, index) => (
+                  {Array.from({ length: 7 * timeSlots.length }).map((_, index) => (
                     <div 
                       key={index} 
                       className="border-dashed border-gray-300 border-b last:border-b-0"
@@ -182,16 +165,16 @@ const WeeklySchedule = () => {
                 </div>
               </div>
 
-              {/* Day Columns - Compact */}
+              {/* Day Columns */}
               {days.map((day, dayIndex) => (
                 <div 
                   key={day} 
                   className="relative"
                   style={{ 
                     display: 'grid',
-                    gridTemplateRows: `repeat(${relevantTimeSlots.length}, 35px)`,
-                    gap: '4px',
-                    minHeight: `${relevantTimeSlots.length * 39}px`
+                    gridTemplateRows: `repeat(${timeSlots.length}, 40px)`,
+                    gap: '2px',
+                    minHeight: `${timeSlots.length * 42}px`
                   }}
                 >
                   {/* Subject Background Tints */}
@@ -243,7 +226,7 @@ const WeeklySchedule = () => {
                   {scheduleData[day]?.length === 0 && (
                     <div 
                       className="flex flex-col items-center justify-center text-gray-400 bg-white/30 rounded-2xl p-4 border-2 border-dashed border-gray-300"
-                      style={{ gridRow: `${Math.floor(relevantTimeSlots.length / 2)} / span 2` }}
+                      style={{ gridRow: `${Math.floor(timeSlots.length / 2)} / span 2` }}
                     >
                       <span className="text-3xl mb-2">
                         {day === 'Monday' ? '🌸' : day === 'Saturday' ? '🧠' : '📚'}
