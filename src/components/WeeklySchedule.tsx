@@ -4,6 +4,7 @@ import { Heart, Book, Sparkles, Star, Coffee, Palette, TestTube } from "lucide-r
 interface ClassBlock {
   subject: string;
   code: string;
+  section: string;
   startTime: number;
   endTime: number;
   color: string;
@@ -20,24 +21,24 @@ const WeeklySchedule = () => {
   const scheduleData: ScheduleData = {
     Monday: [], // No classes
     Tuesday: [
-      { subject: "Physics for Engineering", code: "SC133", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
-      { subject: "Critical Thinking", code: "LAS101", startTime: 9.5, endTime: 12.5, color: "green", icon: "heart" }
+      { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
+      { subject: "Critical Thinking", code: "LAS101", section: "230009", startTime: 9.5, endTime: 12.5, color: "green", icon: "heart" }
     ],
     Wednesday: [
-      { subject: "Fundamental of Calculus", code: "MA111", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
-      { subject: "Fundamental Chemistry", code: "SC123", startTime: 11, endTime: 12.5, color: "purple", icon: "testTube" },
-      { subject: "Engineering Graphics", code: "ME100", startTime: 13.5, endTime: 15.5, color: "orange", icon: "palette" },
-      { subject: "Engineering Graphics", code: "ME100", startTime: 15.5, endTime: 18.5, color: "orange", icon: "palette" }
+      { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
+      { subject: "Fundamental Chemistry", code: "SC123", section: "080001", startTime: 11, endTime: 12.5, color: "purple", icon: "testTube" },
+      { subject: "Engineering Graphics", code: "ME100", section: "908802", startTime: 13.5, endTime: 15.5, color: "orange", icon: "palette" },
+      { subject: "Engineering Graphics", code: "ME100", section: "908802", startTime: 15.5, endTime: 18.5, color: "orange", icon: "palette" }
     ],
     Thursday: [
-      { subject: "Physics for Engineering", code: "SC133", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
-      { subject: "Physics Lab", code: "SC183", startTime: 9.5, endTime: 12.5, color: "pink", icon: "sparkles" },
-      { subject: "Innovation & Entrepreneurial Mindset", code: "TU109", startTime: 13.5, endTime: 16.5, color: "yellow", icon: "coffee" }
+      { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "sparkles" },
+      { subject: "Physics Lab", code: "SC183", section: "003201", startTime: 9.5, endTime: 12.5, color: "pink", icon: "sparkles" },
+      { subject: "Innovation and Entrepreneurial Mindset", code: "TU109", section: "540001", startTime: 13.5, endTime: 16.5, color: "yellow", icon: "coffee" }
     ],
     Friday: [
-      { subject: "Fundamental of Calculus", code: "MA111", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
-      { subject: "Fundamental Chemistry", code: "SC123", startTime: 11, endTime: 12.5, color: "purple", icon: "testTube" },
-      { subject: "Chemistry Lab", code: "SC173", startTime: 13.5, endTime: 16.5, color: "purple", icon: "testTube" }
+      { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "star" },
+      { subject: "Fundamental Chemistry", code: "SC123", section: "080001", startTime: 11, endTime: 12.5, color: "purple", icon: "testTube" },
+      { subject: "Chemistry Lab", code: "SC173", section: "", startTime: 13.5, endTime: 16.5, color: "purple", icon: "testTube" }
     ],
     Saturday: [], // No classes
     Sunday: [] // No classes
