@@ -219,25 +219,35 @@ const InteractiveScheduleInner = () => {
           <p className="text-sm text-gray-500 mt-2">💡 Double-click to edit • Drag to move • Select and resize • Right-click to delete</p>
           
           {/* Time Range Controls */}
-          <div className="absolute top-0 left-0 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-lg">
-            <span className="text-sm font-medium text-purple-700">Time:</span>
-            <input
-              type="number"
-              value={startTime}
-              onChange={(e) => setStartTime(Math.max(0, Math.min(23, parseInt(e.target.value) || 0)))}
-              className="w-16 px-2 py-1 text-sm border border-purple-200 rounded-md text-center"
-              min="0"
-              max="23"
-            />
-            <span className="text-sm text-gray-500">to</span>
-            <input
-              type="number"
-              value={endTime}
-              onChange={(e) => setEndTime(Math.max(startTime + 1, Math.min(23, parseInt(e.target.value) || startTime + 1)))}
-              className="w-16 px-2 py-1 text-sm border border-purple-200 rounded-md text-center"
-              min={startTime + 1}
-              max="23"
-            />
+          <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-white/50">
+            <div className="text-sm font-semibold text-purple-700 mb-3">📅 Schedule Hours</div>
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col items-center">
+                <label className="text-xs text-gray-600 mb-1">Start</label>
+                <select
+                  value={startTime}
+                  onChange={(e) => setStartTime(parseInt(e.target.value))}
+                  className="w-16 px-2 py-1 text-sm border border-purple-200 rounded-md text-center bg-white"
+                >
+                  {Array.from({ length: 24 }, (_, i) => (
+                    <option key={i} value={i}>{i}:00</option>
+                  ))}
+                </select>
+              </div>
+              <div className="text-purple-400">—</div>
+              <div className="flex flex-col items-center">
+                <label className="text-xs text-gray-600 mb-1">End</label>
+                <select
+                  value={endTime}
+                  onChange={(e) => setEndTime(parseInt(e.target.value))}
+                  className="w-16 px-2 py-1 text-sm border border-purple-200 rounded-md text-center bg-white"
+                >
+                  {Array.from({ length: 24 - startTime }, (_, i) => (
+                    <option key={startTime + i + 1} value={startTime + i + 1}>{startTime + i + 1}:00</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
           {/* Add New Class Button */}
