@@ -87,7 +87,7 @@ const InteractiveScheduleInner = () => {
       nodes.push({
         id: `day-${dayIndex}`,
         type: 'dayLabel',
-        position: { x: dayIndex * 250 + 100, y: 50 },
+        position: { x: dayIndex * 220 + 100, y: 50 },
         data: { label: day },
         draggable: false,
         selectable: false,
@@ -134,7 +134,7 @@ const InteractiveScheduleInner = () => {
           id: `class-${nodeId++}`,
           type: 'classNode',
           position: { 
-            x: dayIndex * 250 + 100, 
+            x: dayIndex * 220 + 100, 
             y: yPosition 
           },
           data: classBlock as any,
