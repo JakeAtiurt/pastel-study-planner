@@ -52,6 +52,7 @@ const InteractiveScheduleInner = () => {
   const [startTime, setStartTime] = useState(8);
   const [endTime, setEndTime] = useState(18);
   const [timeFontSize, setTimeFontSize] = useState(12);
+  const [timeHeight, setTimeHeight] = useState(60);
 
   // Convert schedule data to React Flow nodes
   const createInitialNodes = () => {
@@ -111,7 +112,7 @@ const InteractiveScheduleInner = () => {
       nodes.push({
         id: `time-${hour}`,
         type: 'timeLabel',
-        position: { x: 20, y: 100 + (hour - startTime) * 60 },
+        position: { x: 20, y: 100 + (hour - startTime) * timeHeight },
         data: { label: `${hour}:00` },
         draggable: false,
         selectable: false,
@@ -130,8 +131,8 @@ const InteractiveScheduleInner = () => {
     days.forEach((day, dayIndex) => {
       const dayClasses = scheduleData[day as keyof typeof scheduleData];
       dayClasses.forEach((classBlock: ClassBlock, classIndex: number) => {
-        const yPosition = 100 + (classBlock.startTime - startTime) * 60;
-        const height = (classBlock.endTime - classBlock.startTime) * 60;
+        const yPosition = 100 + (classBlock.startTime - startTime) * timeHeight;
+        const height = (classBlock.endTime - classBlock.startTime) * timeHeight;
         
         nodes.push({
           id: `class-${nodeId++}`,
@@ -156,14 +157,14 @@ const InteractiveScheduleInner = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(createInitialNodes());
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // Update nodes when time range or font size changes
+  // Update nodes when time range, font size, or height changes
   const updateTimeRange = useCallback(() => {
     setNodes(createInitialNodes());
-  }, [startTime, endTime, timeFontSize]);
+  }, [startTime, endTime, timeFontSize, timeHeight]);
 
   useEffect(() => {
     updateTimeRange();
-  }, [startTime, endTime, timeFontSize, updateTimeRange]);
+  }, [startTime, endTime, timeFontSize, timeHeight, updateTimeRange]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -250,19 +251,36 @@ const InteractiveScheduleInner = () => {
               </div>
             </div>
             
-            {/* Font Size Control */}
-            <div className="flex flex-col items-center">
-              <label className="text-xs text-gray-600 mb-1">Time Font Size</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="8"
-                  max="20"
-                  value={timeFontSize}
-                  onChange={(e) => setTimeFontSize(parseInt(e.target.value))}
-                  className="w-20 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
-                />
-                <span className="text-xs text-gray-600 w-8">{timeFontSize}px</span>
+            {/* Font Size and Height Controls */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col items-center">
+                <label className="text-xs text-gray-600 mb-1">Font Size</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min="8"
+                    max="20"
+                    value={timeFontSize}
+                    onChange={(e) => setTimeFontSize(parseInt(e.target.value))}
+                    className="w-16 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                  />
+                  <span className="text-xs text-gray-600 w-8">{timeFontSize}px</span>
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <label className="text-xs text-gray-600 mb-1">Row Height</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min="30"
+                    max="120"
+                    value={timeHeight}
+                    onChange={(e) => setTimeHeight(parseInt(e.target.value))}
+                    className="w-16 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                  />
+                  <span className="text-xs text-gray-600 w-8">{timeHeight}px</span>
+                </div>
               </div>
             </div>
           </div>
