@@ -15,6 +15,20 @@ import {
 import '@xyflow/react/dist/style.css';
 import ClassNode from './ClassNode';
 
+// Custom node component without handles for day labels
+const DayLabelNode = ({ data }: { data: { label: string } }) => (
+  <div className="w-full h-full flex items-center justify-center">
+    {data.label}
+  </div>
+);
+
+// Custom node component without handles for time labels
+const TimeLabelNode = ({ data }: { data: { label: string } }) => (
+  <div className="w-full h-full flex items-center justify-center">
+    {data.label}
+  </div>
+);
+
 interface ClassBlock {
   subject: string;
   code: string;
@@ -28,6 +42,8 @@ interface ClassBlock {
 
 const nodeTypes: NodeTypes = {
   classNode: ClassNode,
+  dayLabel: DayLabelNode,
+  timeLabel: TimeLabelNode,
 };
 
 const InteractiveScheduleInner = () => {
@@ -70,7 +86,7 @@ const InteractiveScheduleInner = () => {
     days.forEach((day, dayIndex) => {
       nodes.push({
         id: `day-${dayIndex}`,
-        type: 'default',
+        type: 'dayLabel',
         position: { x: dayIndex * 200 + 100, y: 50 },
         data: { label: day },
         draggable: false,
@@ -91,7 +107,7 @@ const InteractiveScheduleInner = () => {
     for (let hour = 8; hour <= 18; hour++) {
       nodes.push({
         id: `time-${hour}`,
-        type: 'default',
+        type: 'timeLabel',
         position: { x: 20, y: 100 + (hour - 8) * 60 },
         data: { label: `${hour}:00` },
         draggable: false,
