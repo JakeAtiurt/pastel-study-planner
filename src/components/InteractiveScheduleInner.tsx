@@ -97,8 +97,8 @@ const InteractiveScheduleInner = () => {
           borderRadius: '16px',
           color: '#7C3AED',
           fontWeight: 'bold',
-          width: 240,
-          height: 80,
+          width: 200,
+          height: 60,
         }
       });
     });
