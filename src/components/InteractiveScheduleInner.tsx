@@ -51,6 +51,7 @@ const InteractiveScheduleInner = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
   const [startTime, setStartTime] = useState(8);
   const [endTime, setEndTime] = useState(18);
+  const [timeFontSize, setTimeFontSize] = useState(12);
 
   // Convert schedule data to React Flow nodes
   const createInitialNodes = () => {
@@ -118,7 +119,7 @@ const InteractiveScheduleInner = () => {
           background: 'transparent',
           border: 'none',
           color: '#9CA3AF',
-          fontSize: '12px',
+          fontSize: `${timeFontSize}px`,
           width: 50,
           height: 30,
         }
@@ -155,14 +156,14 @@ const InteractiveScheduleInner = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(createInitialNodes());
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // Update nodes when time range changes
+  // Update nodes when time range or font size changes
   const updateTimeRange = useCallback(() => {
     setNodes(createInitialNodes());
-  }, [startTime, endTime]);
+  }, [startTime, endTime, timeFontSize]);
 
   useEffect(() => {
     updateTimeRange();
-  }, [startTime, endTime, updateTimeRange]);
+  }, [startTime, endTime, timeFontSize, updateTimeRange]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -221,7 +222,7 @@ const InteractiveScheduleInner = () => {
           {/* Time Range Controls */}
           <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-white/50">
             <div className="text-sm font-semibold text-purple-700 mb-3">📅 Schedule Hours</div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-3">
               <div className="flex flex-col items-center">
                 <label className="text-xs text-gray-600 mb-1">Start</label>
                 <select
@@ -246,6 +247,22 @@ const InteractiveScheduleInner = () => {
                     <option key={startTime + i + 1} value={startTime + i + 1}>{startTime + i + 1}:00</option>
                   ))}
                 </select>
+              </div>
+            </div>
+            
+            {/* Font Size Control */}
+            <div className="flex flex-col items-center">
+              <label className="text-xs text-gray-600 mb-1">Time Font Size</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="8"
+                  max="20"
+                  value={timeFontSize}
+                  onChange={(e) => setTimeFontSize(parseInt(e.target.value))}
+                  className="w-20 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                />
+                <span className="text-xs text-gray-600 w-8">{timeFontSize}px</span>
               </div>
             </div>
           </div>
