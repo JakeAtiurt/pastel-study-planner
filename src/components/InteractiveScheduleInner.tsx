@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import {
   ReactFlow,
   useNodesState,
@@ -49,6 +49,8 @@ const nodeTypes: NodeTypes = {
 const InteractiveScheduleInner = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
+  const [startTime, setStartTime] = useState(8);
+  const [endTime, setEndTime] = useState(18);
 
   // Convert schedule data to React Flow nodes
   const createInitialNodes = () => {
@@ -104,11 +106,11 @@ const InteractiveScheduleInner = () => {
     });
 
     // Create time grid background
-    for (let hour = 8; hour <= 18; hour++) {
+    for (let hour = startTime; hour <= endTime; hour++) {
       nodes.push({
         id: `time-${hour}`,
         type: 'timeLabel',
-        position: { x: 20, y: 100 + (hour - 8) * 60 },
+        position: { x: 20, y: 100 + (hour - startTime) * 60 },
         data: { label: `${hour}:00` },
         draggable: false,
         selectable: false,
@@ -127,7 +129,7 @@ const InteractiveScheduleInner = () => {
     days.forEach((day, dayIndex) => {
       const dayClasses = scheduleData[day as keyof typeof scheduleData];
       dayClasses.forEach((classBlock: ClassBlock, classIndex: number) => {
-        const yPosition = 100 + (classBlock.startTime - 8) * 60;
+        const yPosition = 100 + (classBlock.startTime - startTime) * 60;
         const height = (classBlock.endTime - classBlock.startTime) * 60;
         
         nodes.push({
@@ -152,6 +154,15 @@ const InteractiveScheduleInner = () => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(createInitialNodes());
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  // Update nodes when time range changes
+  const updateTimeRange = useCallback(() => {
+    setNodes(createInitialNodes());
+  }, [startTime, endTime]);
+
+  useEffect(() => {
+    updateTimeRange();
+  }, [startTime, endTime, updateTimeRange]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -207,6 +218,28 @@ const InteractiveScheduleInner = () => {
           <p className="text-gray-600 text-lg">Drag, resize, and edit your classes! ✨</p>
           <p className="text-sm text-gray-500 mt-2">💡 Double-click to edit • Drag to move • Select and resize • Right-click to delete</p>
           
+          {/* Time Range Controls */}
+          <div className="absolute top-0 left-0 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-lg">
+            <span className="text-sm font-medium text-purple-700">Time:</span>
+            <input
+              type="number"
+              value={startTime}
+              onChange={(e) => setStartTime(Math.max(0, Math.min(23, parseInt(e.target.value) || 0)))}
+              className="w-16 px-2 py-1 text-sm border border-purple-200 rounded-md text-center"
+              min="0"
+              max="23"
+            />
+            <span className="text-sm text-gray-500">to</span>
+            <input
+              type="number"
+              value={endTime}
+              onChange={(e) => setEndTime(Math.max(startTime + 1, Math.min(23, parseInt(e.target.value) || startTime + 1)))}
+              className="w-16 px-2 py-1 text-sm border border-purple-200 rounded-md text-center"
+              min={startTime + 1}
+              max="23"
+            />
+          </div>
+
           {/* Add New Class Button */}
           <button
             onClick={addNewClass}
