@@ -40,7 +40,8 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
       mint: "bg-emerald-100/80 border-emerald-200 text-emerald-900 shadow-emerald-200/50",
       lavender: "bg-purple-100/80 border-purple-200 text-purple-900 shadow-purple-200/50",
       yellow: "bg-amber-100/80 border-amber-200 text-amber-900 shadow-amber-200/50",
-      peach: "bg-orange-100/80 border-orange-200 text-orange-900 shadow-orange-200/50"
+      peach: "bg-orange-100/80 border-orange-200 text-orange-900 shadow-orange-200/50",
+      grey: "bg-gray-100/80 border-gray-200 text-gray-900 shadow-gray-200/50"
     };
     return colorMap[color as keyof typeof colorMap] || colorMap.pink;
   };
@@ -117,6 +118,7 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                   <option value="lavender">💜 Lavender</option>
                   <option value="yellow">💛 Yellow</option>
                   <option value="peach">🧡 Peach</option>
+                  <option value="grey">🩶 Grey</option>
                 </select>
               </>
             ) : (
