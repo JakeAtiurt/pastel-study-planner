@@ -88,22 +88,37 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl pointer-events-none"></div>
         
         <div className="relative h-full flex flex-col">
-          {/* Top Section: Icon and Course Code */}
+          {/* Top Section: Icon, Course Code, and Color */}
           <div className="flex items-center gap-2 mb-2">
             {isEditing ? (
-              <select
-                className="text-xl bg-transparent border border-current rounded outline-none cursor-pointer"
-                value={editData.icon}
-                onChange={(e) => setEditData({...editData, icon: e.target.value})}
-              >
-                <option value="physics">🌸</option>
-                <option value="math">📘</option>
-                <option value="chemistry">🧪</option>
-                <option value="engineering">⚙️</option>
-                <option value="thinking">🧠</option>
-                <option value="innovation">💡</option>
-                <option value="default">📚</option>
-              </select>
+              <>
+                <select
+                  className="text-xl bg-transparent border border-current rounded outline-none cursor-pointer"
+                  value={editData.icon}
+                  onChange={(e) => setEditData({...editData, icon: e.target.value})}
+                >
+                  <option value="physics">🌸</option>
+                  <option value="math">📘</option>
+                  <option value="chemistry">🧪</option>
+                  <option value="engineering">⚙️</option>
+                  <option value="thinking">🧠</option>
+                  <option value="innovation">💡</option>
+                  <option value="default">📚</option>
+                </select>
+                <select
+                  className="text-xs bg-white/90 border border-current rounded outline-none cursor-pointer px-2 py-1"
+                  value={editData.color}
+                  onChange={(e) => setEditData({...editData, color: e.target.value})}
+                  title="Change color"
+                >
+                  <option value="pink">🌸 Pink</option>
+                  <option value="blue">💙 Blue</option>
+                  <option value="mint">🌿 Mint</option>
+                  <option value="lavender">💜 Lavender</option>
+                  <option value="yellow">💛 Yellow</option>
+                  <option value="peach">🧡 Peach</option>
+                </select>
+              </>
             ) : (
               <span className="text-xl">{getEmojiIcon(editData.icon)}</span>
             )}
