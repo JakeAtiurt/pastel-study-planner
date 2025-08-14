@@ -14,6 +14,9 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import ClassNode from './ClassNode';
+import SaveLoadPanel from './SaveLoadPanel';
+import { ScheduleData } from '../lib/supabase';
+import { Toaster } from './ui/toaster';
 
 // Custom node component without handles for day labels
 const DayLabelNode = ({ data }: { data: { label: string } }) => (
@@ -209,6 +212,27 @@ const InteractiveScheduleInner = () => {
     }
   }, [setNodes]);
 
+  // Save/Load functions
+  const handleSave = useCallback(() => {
+    return {
+      nodes: nodes,
+      settings: {
+        startTime,
+        endTime,
+        timeFontSize,
+        timeHeight
+      }
+    };
+  }, [nodes, startTime, endTime, timeFontSize, timeHeight]);
+
+  const handleLoad = useCallback((data: ScheduleData) => {
+    setNodes(data.nodes);
+    setStartTime(data.settings.startTime);
+    setEndTime(data.settings.endTime);
+    setTimeFontSize(data.settings.timeFontSize);
+    setTimeHeight(data.settings.timeHeight);
+  }, [setNodes]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-4">
       <div className="max-w-7xl mx-auto">
@@ -285,13 +309,16 @@ const InteractiveScheduleInner = () => {
             </div>
           </div>
 
-          {/* Add New Class Button */}
-          <button
-            onClick={addNewClass}
-            className="absolute top-0 right-0 bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
-          >
-            ➕ Add Class
-          </button>
+          {/* Control Buttons */}
+          <div className="absolute top-0 right-0 flex gap-3">
+            <SaveLoadPanel onSave={handleSave} onLoad={handleLoad} />
+            <button
+              onClick={addNewClass}
+              className="bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+            >
+              ➕ Add Class
+            </button>
+          </div>
         </div>
 
         {/* Interactive Schedule */}
@@ -352,6 +379,7 @@ const InteractiveScheduleInner = () => {
           </div>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };
