@@ -16,32 +16,32 @@ export interface ScheduleData {
 
 export const saveSchedule = async (scheduleData: ScheduleData) => {
   const { data, error } = await supabase
-    .from('schedules')
+    .from('schedules' as any)
     .upsert({
       name: scheduleData.name,
       nodes: scheduleData.nodes,
       settings: scheduleData.settings
     })
     .select()
-    .single()
+    .maybeSingle()
 
   if (error) throw error
   return data
 }
 
-export const loadSchedules = async () => {
+export const loadSchedules = async (): Promise<ScheduleData[]> => {
   const { data, error } = await supabase
-    .from('schedules')
+    .from('schedules' as any)
     .select('*')
     .order('updated_at', { ascending: false })
 
   if (error) throw error
-  return data
+  return (data as unknown as ScheduleData[]) || []
 }
 
 export const deleteSchedule = async (id: string) => {
   const { error } = await supabase
-    .from('schedules')
+    .from('schedules' as any)
     .delete()
     .eq('id', id)
 
