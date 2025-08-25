@@ -20,7 +20,7 @@ const SaveLoadPanel: React.FC<SaveLoadPanelProps> = ({ onSave, onLoad }) => {
   const fetchSchedules = async () => {
     try {
       const schedules = await loadSchedules()
-      setSavedSchedules(schedules)
+      setSavedSchedules(schedules as ScheduleData[])
     } catch (error) {
       toast({
         title: "Error",

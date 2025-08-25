@@ -60,10 +60,14 @@ const InteractiveScheduleInner = () => {
   // Convert schedule data to React Flow nodes
   const createInitialNodes = () => {
     const scheduleData = {
-      Monday: [],
+      Monday: [
+        { subject: "Intro to Modern Information Technology", code: "TSE101", section: "810001", startTime: 9.5, endTime: 12.5, color: "mint", icon: "technology", classroom: "EGR301" }
+      ],
       Tuesday: [
-        { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "physics", classroom: "SC4001" },
-        { subject: "Critical Thinking", code: "LAS101", section: "230009", startTime: 9.5, endTime: 12.5, color: "mint", icon: "thinking", classroom: "SC1012" }
+        { subject: "Physics for Engineering", code: "SC133", section: "010002", startTime: 8, endTime: 9.5, color: "pink", icon: "physics", classroom: "SC4020" },
+        { subject: "Critical Thinking", code: "LAS101", section: "230009", startTime: 9.5, endTime: 12.5, color: "yellow", icon: "thinking", classroom: "SC1012" },
+        { subject: "Physics (Piyamon)", code: "SC133", section: "Extra", startTime: 14, endTime: 16, color: "pink", icon: "physics", classroom: "Extra" },
+        { subject: "Ethics for Engineers", code: "TSE100", section: "", startTime: 17, endTime: 19, color: "purple", icon: "ethics", classroom: "SC3-413" }
       ],
       Wednesday: [
         { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "math", classroom: "SC3006" },
@@ -72,14 +76,16 @@ const InteractiveScheduleInner = () => {
         { subject: "Engineering Graphics", code: "ME100", section: "908802", startTime: 15.5, endTime: 18.5, color: "peach", icon: "engineering", classroom: "EGR503" }
       ],
       Thursday: [
-        { subject: "Physics for Engineering", code: "SC133", section: "010001", startTime: 8, endTime: 9.5, color: "pink", icon: "physics", classroom: "SC4001" },
-        { subject: "Physics Lab", code: "SC183", section: "003201", startTime: 9.5, endTime: 12.5, color: "pink", icon: "physics" },
-        { subject: "Innovation and Entrepreneurial Mindset", code: "TU109", section: "540001", startTime: 13.5, endTime: 16.5, color: "yellow", icon: "innovation", classroom: "SC3-413" }
+        { subject: "Physics for Engineering", code: "SC133", section: "010002", startTime: 8, endTime: 9.5, color: "pink", icon: "physics", classroom: "SC4020" },
+        { subject: "Physics Lab", code: "SC183", section: "003201", startTime: 9.5, endTime: 12.5, color: "mint", icon: "physics", classroom: "Lab" },
+        { subject: "Innovation and Entrepreneurial Mindset", code: "TU109", section: "540001", startTime: 13.5, endTime: 16.5, color: "orange", icon: "innovation", classroom: "SC3-413" },
+        { subject: "Physics (Piyamon)", code: "SC133", section: "Extra", startTime: 17, endTime: 19, color: "pink", icon: "physics", classroom: "Extra" }
       ],
       Friday: [
         { subject: "Fundamental of Calculus", code: "MA111", section: "070003", startTime: 9.5, endTime: 11, color: "blue", icon: "math", classroom: "SC3006" },
         { subject: "Fundamental Chemistry", code: "SC123", section: "080001", startTime: 11, endTime: 12.5, color: "lavender", icon: "chemistry", classroom: "SC3049" },
-        { subject: "Chemistry Lab", code: "SC173", section: "009101", startTime: 13.5, endTime: 16.5, color: "lavender", icon: "chemistry" }
+        { subject: "Chemistry Lab", code: "SC173", section: "009101", startTime: 13.5, endTime: 16.5, color: "lavender", icon: "chemistry", classroom: "Lab" },
+        { subject: "Calculus (Piyamon)", code: "MA111", section: "Extra", startTime: 17, endTime: 19, color: "blue", icon: "math", classroom: "Extra" }
       ],
       Saturday: [],
       Sunday: []
