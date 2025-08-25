@@ -44,7 +44,7 @@ interface ClassBlock {
 }
 
 const nodeTypes: NodeTypes = {
-  classNode: ClassNode,
+  classNode: (props: any) => <ClassNode {...props} id={props.id} />,
   dayLabel: DayLabelNode,
   timeLabel: TimeLabelNode,
 };

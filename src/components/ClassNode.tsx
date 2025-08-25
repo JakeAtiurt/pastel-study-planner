@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Handle, Position, NodeResizer } from '@xyflow/react';
+import React, { useState, useCallback, useRef } from 'react';
+import { Handle, Position, NodeResizer, useReactFlow } from '@xyflow/react';
 
 interface ClassNodeData {
   subject: string;
@@ -15,11 +15,15 @@ interface ClassNodeData {
 interface ClassNodeProps {
   data: ClassNodeData;
   selected: boolean;
+  id: string;
 }
 
-const ClassNode = ({ data, selected }: ClassNodeProps) => {
+const ClassNode = ({ data, selected, id }: ClassNodeProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(data);
+  const [isDragging, setIsDragging] = useState<'start' | 'end' | null>(null);
+  const dragStartRef = useRef<{ y: number; time: number } | null>(null);
+  const { setNodes } = useReactFlow();
 
   const getEmojiIcon = (iconType: string) => {
     switch (iconType) {
@@ -69,6 +73,58 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
       setEditData(data);
       setIsEditing(false);
     }
+  };
+
+  const handleTimeAdjustment = useCallback((newData: ClassNodeData) => {
+    setEditData(newData);
+    // Update the node in React Flow
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === id
+          ? { ...node, data: newData as unknown as Record<string, unknown> }
+          : node
+      )
+    );
+  }, [id, setNodes]);
+
+  const handleDragStart = (type: 'start' | 'end', e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(type);
+    dragStartRef.current = {
+      y: e.clientY,
+      time: type === 'start' ? editData.startTime : editData.endTime
+    };
+    
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!dragStartRef.current) return;
+      
+      const deltaY = moveEvent.clientY - dragStartRef.current.y;
+      const timeDelta = deltaY / 60; // 60px = 1 hour
+      const newTime = dragStartRef.current.time + timeDelta;
+      
+      if (type === 'start') {
+        const clampedTime = Math.max(0, Math.min(editData.endTime - 0.5, newTime));
+        const roundedTime = Math.round(clampedTime * 4) / 4; // Round to 15-minute intervals
+        const newData = { ...editData, startTime: roundedTime };
+        handleTimeAdjustment(newData);
+      } else {
+        const clampedTime = Math.max(editData.startTime + 0.5, Math.min(24, newTime));
+        const roundedTime = Math.round(clampedTime * 4) / 4; // Round to 15-minute intervals
+        const newData = { ...editData, endTime: roundedTime };
+        handleTimeAdjustment(newData);
+      }
+    };
+    
+    const handleMouseUp = () => {
+      setIsDragging(null);
+      dragStartRef.current = null;
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   return (
@@ -216,7 +272,8 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                       className="text-xs px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditData({...editData, startTime: Math.max(0, editData.startTime - 0.5)});
+                        const newData = {...editData, startTime: Math.max(0, editData.startTime - 0.5)};
+                        handleTimeAdjustment(newData);
                       }}
                       title="Start -30min"
                     >
@@ -226,7 +283,8 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                       className="text-xs px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditData({...editData, startTime: Math.min(23.5, editData.startTime + 0.5)});
+                        const newData = {...editData, startTime: Math.min(23.5, editData.startTime + 0.5)};
+                        handleTimeAdjustment(newData);
                       }}
                       title="Start +30min"
                     >
@@ -237,7 +295,8 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                       className="text-xs px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditData({...editData, endTime: Math.max(editData.startTime + 0.5, editData.endTime - 0.5)});
+                        const newData = {...editData, endTime: Math.max(editData.startTime + 0.5, editData.endTime - 0.5)};
+                        handleTimeAdjustment(newData);
                       }}
                       title="End -30min"
                     >
@@ -247,7 +306,8 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                       className="text-xs px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditData({...editData, endTime: Math.min(24, editData.endTime + 0.5)});
+                        const newData = {...editData, endTime: Math.min(24, editData.endTime + 0.5)};
+                        handleTimeAdjustment(newData);
                       }}
                       title="End +30min"
                     >
@@ -259,6 +319,37 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
             </div>
           </div>
         </div>
+
+        {/* Drag handles for time adjustment */}
+        {!isEditing && (
+          <>
+            {/* Top drag handle for start time */}
+            <div
+              className={`absolute -top-1 left-1/2 transform -translate-x-1/2 w-16 h-2 cursor-ns-resize opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-60 ${
+                isDragging === 'start' ? 'opacity-100' : ''
+              }`}
+              onMouseDown={(e) => handleDragStart('start', e)}
+              title="Drag to adjust start time"
+            >
+              <div className="w-full h-full bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-0.5 bg-white rounded-full"></div>
+              </div>
+            </div>
+            
+            {/* Bottom drag handle for end time */}
+            <div
+              className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-16 h-2 cursor-ns-resize opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-60 ${
+                isDragging === 'end' ? 'opacity-100' : ''
+              }`}
+              onMouseDown={(e) => handleDragStart('end', e)}
+              title="Drag to adjust end time"
+            >
+              <div className="w-full h-full bg-red-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-0.5 bg-white rounded-full"></div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Edit hint */}
         {!isEditing && (
