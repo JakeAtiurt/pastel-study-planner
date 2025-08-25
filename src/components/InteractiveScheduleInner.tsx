@@ -56,6 +56,7 @@ const InteractiveScheduleInner = () => {
   const [endTime, setEndTime] = useState(18);
   const [timeFontSize, setTimeFontSize] = useState(12);
   const [timeHeight, setTimeHeight] = useState(60);
+  const skipNextAutoRegen = useRef(false);
 
   // Convert schedule data to React Flow nodes
   const createInitialNodes = () => {
@@ -172,6 +173,10 @@ const InteractiveScheduleInner = () => {
   }, [startTime, endTime, timeFontSize, timeHeight]);
 
   useEffect(() => {
+    if (skipNextAutoRegen.current) {
+      skipNextAutoRegen.current = false;
+      return;
+    }
     updateTimeRange();
   }, [startTime, endTime, timeFontSize, timeHeight, updateTimeRange]);
 
@@ -220,8 +225,9 @@ const InteractiveScheduleInner = () => {
 
   // Save/Load functions
   const handleSave = useCallback(() => {
+    const currentNodes = (reactFlowInstance?.getNodes?.() as any[]) || nodes;
     return {
-      nodes: nodes,
+      nodes: currentNodes,
       settings: {
         startTime,
         endTime,
@@ -229,10 +235,11 @@ const InteractiveScheduleInner = () => {
         timeHeight
       }
     };
-  }, [nodes, startTime, endTime, timeFontSize, timeHeight]);
+  }, [nodes, startTime, endTime, timeFontSize, timeHeight, reactFlowInstance]);
 
   const handleLoad = useCallback((data: ScheduleData) => {
-    setNodes(data.nodes);
+    skipNextAutoRegen.current = true;
+    setNodes(data.nodes as any);
     setStartTime(data.settings.startTime);
     setEndTime(data.settings.endTime);
     setTimeFontSize(data.settings.timeFontSize);
