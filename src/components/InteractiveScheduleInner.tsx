@@ -26,7 +26,7 @@ const DayLabelNode = ({ data }: { data: { label: string } }) => (
 );
 
 // Custom draggable time row divider
-const TimeRowDivider = ({ data }: { data: { hour: number; onHeightChange: (hour: number, delta: number) => void; position: { x: number; y: number } } }) => {
+const TimeRowDivider = ({ data }: { data: { hour: number; onHeightChange: (hour: number, delta: number) => void } }) => {
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ y: number } | null>(null);
 
@@ -57,19 +57,13 @@ const TimeRowDivider = ({ data }: { data: { hour: number; onHeightChange: (hour:
 
   return (
     <div
-      className={`absolute w-full h-2 cursor-ns-resize flex items-center justify-center transition-all ${
+      className={`w-full h-2 cursor-ns-resize flex items-center justify-center transition-all ${
         isDragging ? 'bg-purple-400 opacity-100' : 'bg-purple-300 opacity-0 hover:opacity-70'
       }`}
-      style={{
-        left: data.position.x,
-        top: data.position.y - 1,
-        width: '1400px', // Span across the entire schedule
-        zIndex: 10
-      }}
       onMouseDown={handleMouseDown}
       title={`Drag to resize row for ${data.hour}:00`}
     >
-      <div className="w-8 h-1 bg-white rounded-full opacity-80"></div>
+      <div className="w-8 h-0.5 bg-white rounded-full opacity-80"></div>
     </div>
   );
 };
@@ -240,21 +234,19 @@ const InteractiveScheduleInner = () => {
         nodes.push({
           id: `divider-${hour}`,
           type: 'timeRowDivider',
-          position: { x: 0, y: dividerY },
+          position: { x: 15, y: dividerY - 1 },
           data: { 
             hour: hour,
-            onHeightChange: updateRowHeightDelta,
-            position: { x: 0, y: dividerY }
+            onHeightChange: updateRowHeightDelta
           },
           draggable: false,
           selectable: false,
           style: {
-            width: 1400,
-            height: 2,
+            width: 60,
+            height: 4,
             background: 'transparent',
             border: 'none',
-            pointerEvents: 'auto',
-            zIndex: 10
+            zIndex: 20
           }
         });
       }
