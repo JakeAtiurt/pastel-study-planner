@@ -181,12 +181,12 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
           
           {/* Bottom Section: Time Display */}
           <div className="mt-auto pt-2 border-t border-white/20 pb-2">
-            <div className="bg-white/90 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 shadow-sm border border-white/60 text-center">
+            <div className="bg-white/90 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 shadow-sm border border-white/60 text-center relative group">
               {isEditing ? (
                 <div className="flex gap-1 items-center">
                   <input
                     type="time"
-                    className="bg-white/90 text-gray-800 text-xs font-bold rounded px-1 py-0.5 border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400"
+                    className="bg-white text-gray-800 text-xs font-bold rounded px-1 py-0.5 border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 w-16"
                     value={`${Math.floor(editData.startTime).toString().padStart(2, '0')}:${((editData.startTime % 1) * 60).toString().padStart(2, '0')}`}
                     onChange={(e) => {
                       const [hours, minutes] = e.target.value.split(':');
@@ -196,7 +196,7 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                   <span className="text-gray-800 font-bold">–</span>
                   <input
                     type="time"
-                    className="bg-white/90 text-gray-800 text-xs font-bold rounded px-1 py-0.5 border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400"
+                    className="bg-white text-gray-800 text-xs font-bold rounded px-1 py-0.5 border border-gray-300 outline-none focus:ring-2 focus:ring-purple-400 w-16"
                     value={`${Math.floor(editData.endTime).toString().padStart(2, '0')}:${((editData.endTime % 1) * 60).toString().padStart(2, '0')}`}
                     onChange={(e) => {
                       const [hours, minutes] = e.target.value.split(':');
@@ -205,7 +205,56 @@ const ClassNode = ({ data, selected }: ClassNodeProps) => {
                   />
                 </div>
               ) : (
-                `${formatTime(editData.startTime)} – ${formatTime(editData.endTime)}`
+                <>
+                  <div className="flex items-center justify-center gap-1">
+                    <span>⏰ {formatTime(editData.startTime)} – {formatTime(editData.endTime)}</span>
+                  </div>
+                  
+                  {/* Quick time adjustment buttons */}
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/95 rounded-lg shadow-lg border border-purple-200 p-1 flex gap-1">
+                    <button
+                      className="text-xs px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditData({...editData, startTime: Math.max(0, editData.startTime - 0.5)});
+                      }}
+                      title="Start -30min"
+                    >
+                      ⏪
+                    </button>
+                    <button
+                      className="text-xs px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditData({...editData, startTime: Math.min(23.5, editData.startTime + 0.5)});
+                      }}
+                      title="Start +30min"
+                    >
+                      ⏩
+                    </button>
+                    <div className="w-px bg-gray-300 mx-1"></div>
+                    <button
+                      className="text-xs px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditData({...editData, endTime: Math.max(editData.startTime + 0.5, editData.endTime - 0.5)});
+                      }}
+                      title="End -30min"
+                    >
+                      ⏪
+                    </button>
+                    <button
+                      className="text-xs px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditData({...editData, endTime: Math.min(24, editData.endTime + 0.5)});
+                      }}
+                      title="End +30min"
+                    >
+                      ⏩
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
