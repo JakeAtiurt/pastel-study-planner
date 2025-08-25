@@ -57,6 +57,7 @@ const InteractiveScheduleInner = () => {
   const [timeFontSize, setTimeFontSize] = useState(12);
   const [timeHeight, setTimeHeight] = useState(60);
   const skipNextAutoRegen = useRef(false);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; nodeId: string } | null>(null);
 
   // Convert schedule data to React Flow nodes
   const createInitialNodes = () => {
@@ -214,14 +215,48 @@ const InteractiveScheduleInner = () => {
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes]);
 
+  const duplicateNode = useCallback((nodeId: string) => {
+    setNodes((nds) => {
+      const nodeToDuplicate = nds.find((n) => n.id === nodeId);
+      if (!nodeToDuplicate || nodeToDuplicate.type !== 'classNode') return nds;
+
+      const newNode: Node = {
+        ...nodeToDuplicate,
+        id: `class-${Date.now()}`,
+        position: {
+          x: nodeToDuplicate.position.x + 20,
+          y: nodeToDuplicate.position.y + 20,
+        },
+      };
+
+      return [...nds, newNode];
+    });
+    setContextMenu(null);
+  }, [setNodes]);
+
+  const deleteNode = useCallback((nodeId: string) => {
+    setNodes((nds) => nds.filter((n) => n.id !== nodeId));
+    setContextMenu(null);
+  }, [setNodes]);
+
   const onNodeContextMenu = useCallback((event: React.MouseEvent, node: Node) => {
     event.preventDefault();
     
-    // Simple confirmation before deletion
-    if (node.type === 'classNode' && window.confirm('Delete this class?')) {
-      setNodes((nds) => nds.filter((n) => n.id !== node.id));
+    if (node.type === 'classNode') {
+      setContextMenu({
+        x: event.clientX,
+        y: event.clientY,
+        nodeId: node.id,
+      });
     }
-  }, [setNodes]);
+  }, []);
+
+  // Close context menu when clicking elsewhere
+  useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
 
   // Save/Load functions
   const handleSave = useCallback(() => {
@@ -368,6 +403,30 @@ const InteractiveScheduleInner = () => {
             </ReactFlow>
           </div>
         </div>
+
+        {/* Context Menu */}
+        {contextMenu && (
+          <div
+            className="fixed bg-white shadow-lg border border-gray-200 rounded-lg py-2 z-50"
+            style={{
+              left: contextMenu.x,
+              top: contextMenu.y,
+            }}
+          >
+            <button
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2"
+              onClick={() => duplicateNode(contextMenu.nodeId)}
+            >
+              📋 Duplicate
+            </button>
+            <button
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600 flex items-center gap-2"
+              onClick={() => deleteNode(contextMenu.nodeId)}
+            >
+              🗑️ Delete
+            </button>
+          </div>
+        )}
 
         {/* Instructions */}
         <div className="mt-6 bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50">
