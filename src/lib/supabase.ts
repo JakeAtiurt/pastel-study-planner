@@ -8,7 +8,8 @@ export interface ScheduleData {
     startTime: number
     endTime: number
     timeFontSize: number
-    timeHeight: number
+    timeHeight?: number // Keep for backward compatibility
+    rowHeights?: Record<number, number>
   }
   created_at?: string
   updated_at?: string

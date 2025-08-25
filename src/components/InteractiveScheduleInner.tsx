@@ -25,12 +25,68 @@ const DayLabelNode = ({ data }: { data: { label: string } }) => (
   </div>
 );
 
-// Custom node component without handles for time labels
-const TimeLabelNode = ({ data }: { data: { label: string } }) => (
-  <div className="w-full h-full flex items-center justify-center">
-    {data.label}
-  </div>
-);
+// Custom node component for time labels with height editing
+const TimeLabelNode = ({ data }: { data: { label: string; hour?: number; currentHeight?: number; onHeightChange?: (hour: number, height: number) => void } }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempHeight, setTempHeight] = useState(data.currentHeight || 60);
+  
+  useEffect(() => {
+    setTempHeight(data.currentHeight || 60);
+  }, [data.currentHeight]);
+  
+  return (
+    <div 
+      className="w-full h-full flex items-center justify-center cursor-pointer bg-gray-50/50 hover:bg-gray-100/50 rounded transition-colors border border-gray-200/50"
+      onClick={() => {
+        if (data.hour !== undefined) {
+          setIsEditing(true);
+        }
+      }}
+      title={data.hour !== undefined ? "Click to edit row height" : ""}
+    >
+      {isEditing && data.hour !== undefined ? (
+        <div className="flex flex-col items-center gap-1 p-2">
+          <input
+            type="range"
+            min="30"
+            max="150"
+            value={tempHeight}
+            onChange={(e) => setTempHeight(parseInt(e.target.value))}
+            className="w-12 h-1 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="flex gap-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (data.onHeightChange && data.hour !== undefined) {
+                  data.onHeightChange(data.hour, tempHeight);
+                }
+                setIsEditing(false);
+              }}
+              className="text-xs px-1 py-0.5 bg-green-100 hover:bg-green-200 text-green-700 rounded"
+            >
+              ✓
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setTempHeight(data.currentHeight || 60);
+                setIsEditing(false);
+              }}
+              className="text-xs px-1 py-0.5 bg-red-100 hover:bg-red-200 text-red-700 rounded"
+            >
+              ✕
+            </button>
+          </div>
+          <span className="text-xs text-gray-600">{tempHeight}px</span>
+        </div>
+      ) : (
+        <span className="text-sm">{data.label}</span>
+      )}
+    </div>
+  );
+};
 
 interface ClassBlock {
   subject: string;
@@ -43,21 +99,59 @@ interface ClassBlock {
   classroom?: string;
 }
 
-const nodeTypes: NodeTypes = {
-  classNode: (props: any) => <ClassNode {...props} id={props.id} />,
-  dayLabel: DayLabelNode,
-  timeLabel: TimeLabelNode,
-};
-
 const InteractiveScheduleInner = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
   const [startTime, setStartTime] = useState(8);
   const [endTime, setEndTime] = useState(18);
   const [timeFontSize, setTimeFontSize] = useState(12);
-  const [timeHeight, setTimeHeight] = useState(60);
+  const [rowHeights, setRowHeights] = useState<Record<number, number>>({});
   const skipNextAutoRegen = useRef(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; nodeId: string } | null>(null);
+
+  // Function to update row height
+  const updateRowHeight = useCallback((hour: number, height: number) => {
+    setRowHeights(prev => ({
+      ...prev,
+      [hour]: height
+    }));
+  }, []);
+
+  const nodeTypes: NodeTypes = {
+    classNode: (props: any) => <ClassNode {...props} id={props.id} />,
+    dayLabel: DayLabelNode,
+    timeLabel: (props: any) => (
+      <TimeLabelNode 
+        {...props} 
+        data={{
+          ...props.data,
+          currentHeight: rowHeights[props.data.hour] || 60,
+          onHeightChange: updateRowHeight
+        }} 
+      />
+    ),
+  };
+
+  // Helper function to get row height for a specific hour
+  const getRowHeight = (hour: number) => {
+    return rowHeights[hour] || 60; // Default to 60px if not set
+  };
+
+  // Helper function to get cumulative Y position for a time
+  const getYPosition = (time: number) => {
+    let y = 100; // Starting Y position
+    for (let hour = startTime; hour < time; hour++) {
+      if (Number.isInteger(hour)) {
+        y += getRowHeight(hour);
+      } else {
+        // For fractional hours, calculate proportional height
+        const baseHour = Math.floor(hour);
+        const fraction = hour - baseHour;
+        y += getRowHeight(baseHour) * fraction;
+      }
+    }
+    return y;
+  };
 
   // Convert schedule data to React Flow nodes
   const createInitialNodes = () => {
@@ -118,13 +212,14 @@ const InteractiveScheduleInner = () => {
       });
     });
 
-    // Create time grid background
+    // Create time grid background with individual row heights
     for (let hour = startTime; hour <= endTime; hour++) {
+      const yPos = getYPosition(hour);
       nodes.push({
         id: `time-${hour}`,
         type: 'timeLabel',
-        position: { x: 20, y: 100 + (hour - startTime) * timeHeight },
-        data: { label: `${hour}:00` },
+        position: { x: 20, y: yPos },
+        data: { label: `${hour}:00`, hour }, // Include hour for reference
         draggable: false,
         selectable: false,
         style: {
@@ -133,7 +228,7 @@ const InteractiveScheduleInner = () => {
           color: '#9CA3AF',
           fontSize: `${timeFontSize}px`,
           width: 50,
-          height: 30,
+          height: getRowHeight(hour),
         }
       });
     }
@@ -142,8 +237,9 @@ const InteractiveScheduleInner = () => {
     days.forEach((day, dayIndex) => {
       const dayClasses = scheduleData[day as keyof typeof scheduleData];
       dayClasses.forEach((classBlock: ClassBlock, classIndex: number) => {
-        const yPosition = 100 + (classBlock.startTime - startTime) * timeHeight;
-        const height = (classBlock.endTime - classBlock.startTime) * timeHeight;
+        const yPosition = getYPosition(classBlock.startTime);
+        const endY = getYPosition(classBlock.endTime);
+        const height = endY - yPosition;
         
         nodes.push({
           id: `class-${nodeId++}`,
@@ -168,10 +264,10 @@ const InteractiveScheduleInner = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(createInitialNodes());
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // Update nodes when time range, font size, or height changes
+  // Update nodes when time range, font size, or row heights change
   const updateTimeRange = useCallback(() => {
     setNodes(createInitialNodes());
-  }, [startTime, endTime, timeFontSize, timeHeight]);
+  }, [startTime, endTime, timeFontSize, rowHeights]);
 
   useEffect(() => {
     if (skipNextAutoRegen.current) {
@@ -179,7 +275,7 @@ const InteractiveScheduleInner = () => {
       return;
     }
     updateTimeRange();
-  }, [startTime, endTime, timeFontSize, timeHeight, updateTimeRange]);
+  }, [startTime, endTime, timeFontSize, rowHeights, updateTimeRange]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -267,10 +363,10 @@ const InteractiveScheduleInner = () => {
         startTime,
         endTime,
         timeFontSize,
-        timeHeight
+        rowHeights
       }
     };
-  }, [nodes, startTime, endTime, timeFontSize, timeHeight, reactFlowInstance]);
+  }, [nodes, startTime, endTime, timeFontSize, rowHeights, reactFlowInstance]);
 
   const handleLoad = useCallback((data: ScheduleData) => {
     skipNextAutoRegen.current = true;
@@ -278,7 +374,7 @@ const InteractiveScheduleInner = () => {
     setStartTime(data.settings.startTime);
     setEndTime(data.settings.endTime);
     setTimeFontSize(data.settings.timeFontSize);
-    setTimeHeight(data.settings.timeHeight);
+    setRowHeights(data.settings.rowHeights || {});
   }, [setNodes]);
 
   return (
@@ -341,17 +437,10 @@ const InteractiveScheduleInner = () => {
               </div>
               
               <div className="flex flex-col items-center">
-                <label className="text-xs text-gray-600 mb-1">Row Height</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min="30"
-                    max="120"
-                    value={timeHeight}
-                    onChange={(e) => setTimeHeight(parseInt(e.target.value))}
-                    className="w-16 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <span className="text-xs text-gray-600 w-8">{timeHeight}px</span>
+                <label className="text-xs text-gray-600 mb-1">Row Heights</label>
+                <div className="text-xs text-center text-gray-500">
+                  <p>Independent row heights</p>
+                  <p>Edit by clicking time labels</p>
                 </div>
               </div>
             </div>
