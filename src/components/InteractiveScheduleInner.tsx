@@ -25,65 +25,63 @@ const DayLabelNode = ({ data }: { data: { label: string } }) => (
   </div>
 );
 
-// Custom node component for time labels with height editing
-const TimeLabelNode = ({ data }: { data: { label: string; hour?: number; currentHeight?: number; onHeightChange?: (hour: number, height: number) => void } }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempHeight, setTempHeight] = useState(data.currentHeight || 60);
-  
-  useEffect(() => {
-    setTempHeight(data.currentHeight || 60);
-  }, [data.currentHeight]);
-  
+// Custom draggable time row divider
+const TimeRowDivider = ({ data }: { data: { hour: number; onHeightChange: (hour: number, delta: number) => void; position: { x: number; y: number } } }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef<{ y: number } | null>(null);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+    dragStartRef.current = { y: e.clientY };
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!dragStartRef.current) return;
+      
+      const deltaY = moveEvent.clientY - dragStartRef.current.y;
+      data.onHeightChange(data.hour, deltaY);
+      dragStartRef.current = { y: moveEvent.clientY };
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      dragStartRef.current = null;
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  return (
+    <div
+      className={`absolute w-full h-2 cursor-ns-resize flex items-center justify-center transition-all ${
+        isDragging ? 'bg-purple-400 opacity-100' : 'bg-purple-300 opacity-0 hover:opacity-70'
+      }`}
+      style={{
+        left: data.position.x,
+        top: data.position.y - 1,
+        width: '1400px', // Span across the entire schedule
+        zIndex: 10
+      }}
+      onMouseDown={handleMouseDown}
+      title={`Drag to resize row for ${data.hour}:00`}
+    >
+      <div className="w-8 h-1 bg-white rounded-full opacity-80"></div>
+    </div>
+  );
+};
+
+// Custom node component for time labels
+const TimeLabelNode = ({ data }: { data: { label: string; hour?: number; currentHeight?: number } }) => {
   return (
     <div 
-      className="w-full h-full flex items-center justify-center cursor-pointer bg-gray-50/50 hover:bg-gray-100/50 rounded transition-colors border border-gray-200/50"
-      onClick={() => {
-        if (data.hour !== undefined) {
-          setIsEditing(true);
-        }
-      }}
-      title={data.hour !== undefined ? "Click to edit row height" : ""}
+      className="w-full h-full flex items-center justify-center bg-gray-50/50 rounded border border-gray-200/50"
+      title={data.hour !== undefined ? `${data.label} (${data.currentHeight || 60}px)` : data.label}
     >
-      {isEditing && data.hour !== undefined ? (
-        <div className="flex flex-col items-center gap-1 p-2">
-          <input
-            type="range"
-            min="30"
-            max="150"
-            value={tempHeight}
-            onChange={(e) => setTempHeight(parseInt(e.target.value))}
-            className="w-12 h-1 bg-purple-200 rounded-lg appearance-none cursor-pointer"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <div className="flex gap-1">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (data.onHeightChange && data.hour !== undefined) {
-                  data.onHeightChange(data.hour, tempHeight);
-                }
-                setIsEditing(false);
-              }}
-              className="text-xs px-1 py-0.5 bg-green-100 hover:bg-green-200 text-green-700 rounded"
-            >
-              ✓
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setTempHeight(data.currentHeight || 60);
-                setIsEditing(false);
-              }}
-              className="text-xs px-1 py-0.5 bg-red-100 hover:bg-red-200 text-red-700 rounded"
-            >
-              ✕
-            </button>
-          </div>
-          <span className="text-xs text-gray-600">{tempHeight}px</span>
-        </div>
-      ) : (
-        <span className="text-sm">{data.label}</span>
-      )}
+      <span className="text-sm font-medium text-gray-700">{data.label}</span>
     </div>
   );
 };
@@ -109,12 +107,16 @@ const InteractiveScheduleInner = () => {
   const skipNextAutoRegen = useRef(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; nodeId: string } | null>(null);
 
-  // Function to update row height
-  const updateRowHeight = useCallback((hour: number, height: number) => {
-    setRowHeights(prev => ({
-      ...prev,
-      [hour]: height
-    }));
+  // Function to update row height with delta (for dragging)
+  const updateRowHeightDelta = useCallback((hour: number, delta: number) => {
+    setRowHeights(prev => {
+      const currentHeight = prev[hour] || 60;
+      const newHeight = Math.max(30, Math.min(200, currentHeight + delta));
+      return {
+        ...prev,
+        [hour]: newHeight
+      };
+    });
   }, []);
 
   const nodeTypes: NodeTypes = {
@@ -125,11 +127,11 @@ const InteractiveScheduleInner = () => {
         {...props} 
         data={{
           ...props.data,
-          currentHeight: rowHeights[props.data.hour] || 60,
-          onHeightChange: updateRowHeight
+          currentHeight: rowHeights[props.data.hour] || 60
         }} 
       />
     ),
+    timeRowDivider: (props: any) => <TimeRowDivider {...props} />
   };
 
   // Helper function to get row height for a specific hour
@@ -231,6 +233,31 @@ const InteractiveScheduleInner = () => {
           height: getRowHeight(hour),
         }
       });
+
+      // Add draggable divider at the bottom of each row (except the last one)
+      if (hour < endTime) {
+        const dividerY = yPos + getRowHeight(hour);
+        nodes.push({
+          id: `divider-${hour}`,
+          type: 'timeRowDivider',
+          position: { x: 0, y: dividerY },
+          data: { 
+            hour: hour,
+            onHeightChange: updateRowHeightDelta,
+            position: { x: 0, y: dividerY }
+          },
+          draggable: false,
+          selectable: false,
+          style: {
+            width: 1400,
+            height: 2,
+            background: 'transparent',
+            border: 'none',
+            pointerEvents: 'auto',
+            zIndex: 10
+          }
+        });
+      }
     }
 
     // Create class nodes
